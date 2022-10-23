@@ -1,0 +1,595 @@
+﻿using System;
+using System.Drawing;
+using System.Numerics;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
+using System.Windows;
+
+internal class Program
+{
+    //global scoring and keys variables
+    static int myScore = 300;
+    static int aiScore = 500;
+    static int row = Console.WindowHeight / 2;
+    static int col = Console.WindowWidth / 2;
+
+    private static void Main()
+    {
+
+        Console.Title = "DICE ADVENTURERS";
+        Intro();
+        Pause();
+        StartMenu();
+    }
+
+    static void Clear()
+    {
+        Console.Clear();
+    }
+
+    static int StartMenu()
+    {
+        do
+        {
+            Console.Write(@"
+    1. Play
+    2. Idle Play
+    3. Credits
+    4. Quit the Game
+
+    Please Enter a Choice
+");
+            //if the choice is invalid, set to default case and restart menu
+            bool itWorked = int.TryParse(Console.ReadLine(), out int choice);
+            if (!itWorked)
+            {
+                Console.Beep();
+                Console.Write("Invalid input, restarting menu...");
+                Pause();
+                Clear();
+            }
+
+            switch (choice)
+            {
+                case 1:
+                    Clear();
+                    IntroAdventure();
+                    break;
+                case 2:
+                    Clear();
+                    DiceGame();
+                    break;
+                case 3:
+                    Clear();
+                    Credits();
+                    break;
+                case 4:
+                    return 0;
+            }
+        }
+        while (true);
+    }
+
+    static void Intro()
+    {
+        //splash screen
+        const int MINUS_WIDTH = 10;
+        const int MINUS_HEITH = 8;
+        const int DIV = 2;
+        // DICE ADVENTURERS would in black on a red background in the middle of the screen
+        Console.BackgroundColor = ConsoleColor.Red;
+        Console.ForegroundColor = ConsoleColor.Black;
+        string s = "DICE ADVENTURERS";
+        Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH);
+        Console.WriteLine(s);
+        Console.ResetColor();
+        DoublePause();
+        Clear();
+
+    }
+
+    static void Pause()
+    {
+        Thread.Sleep(1000);
+    }
+
+    static void DoublePause()
+    {
+        Thread.Sleep(2000);
+    }
+
+    static void End()
+    {
+
+        // will display countdown
+        for (int i = 5; i >= 0; i--)
+        {
+            Console.Write($"\rThe Game will quit in {i} ");
+            Pause();
+        }
+        Clear();
+    }
+
+    static void DiceGame()
+    {
+
+        int count;
+        int myRollOne = DiceRoll();
+        int myRollTwo = DiceRoll();
+        int aiRollOne = DiceRoll();
+        int aiRollTwo = DiceRoll();
+        int myTotal = myRollOne + myRollTwo;
+        int aiTotal = aiRollOne + aiRollTwo;
+
+        Console.WriteLine(@$"
+    You have 5 turns to beat the Enemy AI
+    Please, press Enter to roll");
+
+        //5 rounds
+        for (count = 5; count >= 0; count--)
+        {
+
+
+            Clear();
+            Console.WriteLine($"You have {count} rolls left");
+            Pause();
+
+            Console.WriteLine(@$"
+        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
+           
+        Enemy AI rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
+
+            if (myTotal > aiTotal)
+            {
+                Pause();
+                myScore += myTotal;
+                Console.WriteLine(@$"
+        You won the round
+        Your score is {myScore} and the Enemy AI score is {aiScore}
+            
+        Press Enter to contiue");
+                Console.ReadKey();
+            }
+            else if (myTotal < aiTotal)
+            {
+                Pause();
+                aiScore += aiTotal;
+                Console.WriteLine(@$"
+        You lost the round.
+        Your score is {myScore} and the Enemy AI score is {aiScore}
+            
+        Press Enter to contiue");
+                Console.ReadKey();
+            }
+            else
+            {
+                Pause();
+                aiScore += aiTotal;
+                myScore += myTotal;
+                Console.WriteLine(@$"
+        You both rolled the same numbers.
+        Your score is {myScore} and the Enemy AI score is {aiScore}
+            
+        Press Enter to contiue");
+
+                Console.ReadKey();
+            }
+        }
+        Console.ReadKey();
+        Clear();
+        {
+            if (myScore > aiScore)
+            {
+
+                Console.WriteLine(@$"
+    YOU WON!
+
+    Your final score is {myScore}
+    The AI's score is {aiScore}");
+            }
+            else
+            {
+                Pause();
+                Console.WriteLine(@$"
+    YOU LOST!
+
+    Your final score is {myScore}
+    The AI's score is {aiScore}");
+            }
+        }
+        End();
+
+    }
+
+    static void IntroAdventure()
+    {
+        Console.WriteLine("\nDuring one villain's long long long long long long long and tedious battle monologue...");
+        DoublePause();
+        Clear();
+        Adventure();
+    }
+
+    static int DiceRoll()
+    {
+        //new random dice
+        Random dice = new();
+        int roll = dice.Next(1, 11);
+        return roll;
+    }
+
+    static void Adventure()
+    {
+        //level progression
+        for (int i = 0; i < 4; i++)
+        {
+            Level();
+            BossFight();
+        }
+        Level();
+        FinalFight();
+        EndGame();
+        End();
+    }
+
+    static int CoordinatesWidth()
+    {
+        int[] numbers = Enumerable.Range(10, 100).ToArray();
+        Random coordinates = new();
+        int index = coordinates.Next(0, numbers.Length);
+        int rdNumber = numbers[index];
+        return rdNumber;
+    }
+
+    static int CoordinatesHeight()
+    {
+        int[] numbers = Enumerable.Range(5, 29).ToArray();
+        Random coordinates = new();
+        int index = coordinates.Next(0, numbers.Length);
+        int rdNumber = numbers[index];
+        return rdNumber;
+    }
+
+    static string Prompt()
+    {
+        //REF for the speech:https://www.scoopwhoop.com/entertainment/times-villains-made-sense-and-convinced-us-they-were-right/
+        string[] talk = { "You (humans) move to an area and you multiply and multiply until " +
+                "every natural resource is consumed and the only way you can survive is to spread to another area...",
+                " You had a bad day once, am I right?… You had a bad day and everything changed. Why else would you...",
+                "And in a supreme act of selfishness shattered history like a rank amateur, " +
+                "turned the world into a living hell moments away from destruction and ‘I AM’ the villain?",
+                "You have been supplied with a false idol to stop you tearing down this CORRUPT CITY! " +
+                "Let me tell you the truth... ",
+                "This universe is finite, its resources, finite, if life is left unchecked, life will cease to exist. " +
+                "It needs correction… I’m the only one who knows that. At least I’m the only one with the will to act on it!",
+                "I said, these human beings were flawed and murderous. And for that..."};
+        Random speech = new();
+        int index = speech.Next(0, talk.Length);
+        string talking = talk[index];
+        return talking;
+    }
+
+    static void Level()
+    {
+        //screen width = 120
+        //screen height = 30
+        string levelOne = DiceSprite();
+        const int PLAY_WIDTH = 60;
+        const int PLAY_HEIGTH = 15;
+        int diceWitdth = CoordinatesWidth();
+        int diceHeight = CoordinatesHeight();
+        //range to initiate BossFight
+        const int MIN_WIDTH = 2;
+        const int MIN_HEIGTH = 2;
+        const int MAX_WIDTH = 2;
+        const int MAX_HEITH = 2;
+
+
+
+        Console.WriteLine($@"Your Health :     {myScore}
+Villain's Health: {aiScore}");
+
+        Console.WriteLine(Prompt());
+        Pause();
+
+        Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain\nPress Q to quit");
+        Pause();
+
+        //dice will generate at this position
+        Console.SetCursorPosition(diceWitdth, diceHeight);
+        Console.Write(levelOne);
+        //start game at this position
+        Console.SetCursorPosition(PLAY_WIDTH, PLAY_HEIGTH);
+        bool coord;
+        do
+        {
+            Keys();
+            coord = col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH && row <= diceHeight + MAX_HEITH && row >= diceHeight - MIN_HEIGTH;
+
+        } while (!coord);
+
+        Clear();
+    }
+
+    static void Keys()
+    {
+        ConsoleKeyInfo key;
+
+        key = Console.ReadKey(true);
+        switch (key.Key)
+        {
+            case ConsoleKey.UpArrow:
+                row--;
+                break;
+            case ConsoleKey.DownArrow:
+                row++;
+                break;
+            case ConsoleKey.RightArrow:
+                col++;
+                break;
+            case ConsoleKey.LeftArrow:
+                col--;
+                break;
+            case ConsoleKey.Q:
+                End();
+                Main();
+                break;
+            default:
+                Console.Beep();
+                Console.Write("quack");
+                break;
+        }
+        //set the cursor's new position
+        Console.SetCursorPosition(col, row);
+    }
+
+    static string DiceSprite()
+    {
+        //array display the image of dice
+        const int ARRAY_MIN = 0;
+        const int ARRAY_MAX = 5;
+        string[] dice = { "[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]" };
+        return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
+    }
+
+    static void BossFight()
+    {
+
+        int myTotal;
+        int aiTotal;
+        int count;
+
+        //5 turns to play. Two dice are rolled.
+        //The total is substracted from HP.
+        //Once one reaches 0 game over
+        Console.WriteLine(@$"
+    You have 5 turns to attack the Villainl
+    Press Enter to Roll");
+
+        //wait for user to press Enter
+        ConsoleKeyInfo key = Console.ReadKey();
+
+        for (count = 5; count >= 0; count--)
+        {
+            if (key.Key.Equals(ConsoleKey.Enter))
+            {
+                Console.WriteLine("Press Enter to Roll");
+            }
+            Console.ReadLine();
+
+            if (myScore <= 0 || aiScore <= 0) EndGame();
+
+            int myRollOne = DiceRoll();
+            int myRollTwo = DiceRoll();
+            int aiRollOne = DiceRoll();
+            int aiRollTwo = DiceRoll();
+
+            Clear();
+            Console.WriteLine($"You have {count} rolls left");
+            Pause();
+            myTotal = myRollOne + myRollTwo;
+            aiTotal = aiRollOne + aiRollTwo;
+            Console.WriteLine(@$"
+        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
+           
+        The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
+
+            if (myTotal > aiTotal)
+            {
+                Pause();
+                myScore -= aiTotal;
+                aiScore -= myTotal;
+                Console.WriteLine(@$"
+        You landed a good hit!
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+            }
+            else if (myTotal < aiTotal)
+            {
+                Pause();
+                aiScore -= aiTotal;
+                myScore -= myTotal;
+                Console.WriteLine(@$"
+        You were clumsy!
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+            }
+            else
+            {
+                Pause();
+                aiScore += aiTotal;
+                myScore += myTotal;
+                Console.WriteLine(@$"
+        You both rolled the same numbers.
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+            }
+        }
+        DoublePause();
+        DoublePause();
+        Clear();
+        if (myScore > aiScore)
+        {
+            Console.WriteLine(@$"
+    You had a good fight!
+
+    Your final health is {myScore}
+    The Villain's is {aiScore}");
+            DoublePause();
+            DoublePause();
+        }
+        else
+        {
+            Console.WriteLine(@$"
+    You call this a fight?!!
+
+    Your final health is {myScore}
+    The Villain's is {aiScore}");
+            DoublePause();
+            DoublePause();
+        }
+        Clear();
+    }
+
+    static void FinalFight()
+    {
+
+        int myTotal;
+        int aiTotal;
+        int count;
+
+        //5 turns to play
+        //Two dice are rolled
+        //Boss gets additional dice
+        //The total is substracted from HP
+        //Once one reaches 0 game over
+
+        Console.WriteLine(@$"
+    You have 5 turns to attack the Villain");
+        //wait for user to press Enter
+        ConsoleKeyInfo key = Console.ReadKey();
+
+        if (key.Key.Equals(ConsoleKey.Enter))
+        {
+            Console.WriteLine("Enter Press to Roll");
+        }
+        Console.ReadLine();
+
+        for (count = 5; count >= 0; count--)
+        {
+
+            if (myScore <= 0 || aiScore <= 0)
+            {
+                EndGame();
+            }
+            //Boss gets additional dice
+            int myRollOne = DiceRoll();
+            int myRollTwo = DiceRoll();
+            int aiRollOne = DiceRoll();
+            int aiRollTwo = DiceRoll();
+            int aiRollThree = DiceRoll();
+
+            Clear();
+            Console.WriteLine($"You have {count} rolls left");
+            Pause();
+            myTotal = myRollOne + myRollTwo;
+            aiTotal = aiRollOne + aiRollTwo + aiRollThree;
+            Console.WriteLine(@$"
+        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
+           
+        The Villain rolled a {aiRollOne},{aiRollTwo}, and a {aiRollThree} with a total of {aiTotal}");
+
+            if (myTotal > aiTotal)
+            {
+                Pause();
+                myScore -= aiTotal;
+                aiScore -= myTotal;
+                Console.WriteLine(@$"
+        You landed a good hit!
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+                Console.ReadKey();
+            }
+            else if (myTotal < aiTotal)
+            {
+                Pause();
+                aiScore -= aiTotal;
+                myScore -= myTotal;
+                Console.WriteLine(@$"
+        You were clumsy!
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+                Console.ReadKey();
+            }
+            else
+            {
+                Pause();
+                aiScore += aiTotal;
+                myScore += myTotal;
+                Console.WriteLine(@$"
+        You both rolled the same numbers.
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+
+                Console.ReadKey();
+            }
+        }
+        Clear();
+    }
+
+    static void EndGame()
+    {
+        if (myScore <= 0 || myScore < aiScore)
+        {
+            Console.WriteLine("\nYOU DIED");
+            End();
+            Main();
+        }
+        else if (aiScore <= 0 || myScore > aiScore)
+        {
+            Console.WriteLine("\nYOU WIN");
+            End();
+        }
+
+    }
+
+    static void Credits()
+    {
+        const int MINUS_WIDTH = 10;
+        const int MINUS_HEITH_TITLE = 8;
+        const int MINUS_HEITH_NAME = 6;
+        const int DIV = 2;
+
+        string[] credits = {"EXECUTIVE PRODUCER", "PRODUCER","STORY BY", "DESIGNER", "UI ARTIST", "LEAD LEVEL DESIGNER",
+            "LEAD ENGINEER", "QUALITY ASSURANCE", "PLAYTESTER", "SPECIAL THANKS:"};
+        Intro();
+        Console.BackgroundColor = ConsoleColor.Red;
+        Console.ForegroundColor = ConsoleColor.Black;
+
+        //display each element of the array in the middle of screen
+        foreach (string c in credits)
+        {
+            Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH_TITLE);
+            Console.WriteLine("{0} ", c);
+            Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH_NAME);
+            Console.WriteLine("Veronika Vilenski");
+            DoublePause();
+            Clear();
+        }
+        Console.ResetColor();
+        Clear();
+    }
+}
+
+
