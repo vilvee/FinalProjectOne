@@ -65,6 +65,12 @@ internal class Program
                     break;
                 case 4:
                     return 0;
+                 default:
+                    Console.Beep();
+                    Console.Write("Invalid input, restarting menu...");
+                    Pause();
+                    Console.Clear();
+                    break;
             }
         }
         while (true);
@@ -301,8 +307,15 @@ Villain's Health: {aiScore}");
         Console.SetCursorPosition(PLAY_WIDTH, PLAY_HEIGTH);
         bool coord;
         do
-        {
-            Keys();
+        {   
+            if (row == 1 || col == 1 || row ==119 || col == 29)
+            {
+                Console.SetCursorPosition(row--, col--);
+                Pause();
+                Keys(); 
+            }
+            else Keys();
+
             coord = col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH && row <= diceHeight + MAX_HEITH && row >= diceHeight - MIN_HEIGTH;
 
         } while (!coord);
@@ -313,33 +326,34 @@ Villain's Health: {aiScore}");
     static void Keys()
     {
         ConsoleKeyInfo key;
+ //set the cursor's new position
 
-        key = Console.ReadKey(true);
-        switch (key.Key)
-        {
-            case ConsoleKey.UpArrow:
-                row--;
-                break;
-            case ConsoleKey.DownArrow:
-                row++;
-                break;
-            case ConsoleKey.RightArrow:
-                col++;
-                break;
-            case ConsoleKey.LeftArrow:
-                col--;
-                break;
-            case ConsoleKey.Q:
-                End();
-                Main();
-                break;
-            default:
-                Console.Beep();
-                Console.Write("quack");
-                break;
-        }
-        //set the cursor's new position
-        Console.SetCursorPosition(col, row);
+            key = Console.ReadKey(true);
+            switch (key.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    row--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    row++;
+                    break;
+                case ConsoleKey.RightArrow:
+                    col++;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    col--;
+                    break;
+                case ConsoleKey.Q:
+                    End();
+                    Main();
+                    break;
+                default:
+                    Console.Beep();
+                    Console.Write("quack");
+                    break;
+            }
+            Console.SetCursorPosition(col, row);
+
     }
 
     static string DiceSprite()
