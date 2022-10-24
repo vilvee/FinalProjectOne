@@ -79,9 +79,9 @@ internal class Program
         // DICE ADVENTURERS would in black on a red background in the middle of the screen
         Console.BackgroundColor = ConsoleColor.Red;
         Console.ForegroundColor = ConsoleColor.Black;
-        string s = "DICE ADVENTURERS";
+        const string S = "DICE ADVENTURERS";
         Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH);
-        Console.WriteLine(s);
+        Console.WriteLine(S);
         Console.ResetColor();
         DoublePause();
         Clear();
