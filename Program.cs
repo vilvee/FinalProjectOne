@@ -308,13 +308,8 @@ Villain's Health: {aiScore}");
         bool coord;
         do
         {   
-            if (row == 1 || col == 1 || row ==119 || col == 29)
-            {
-                Console.SetCursorPosition(row--, col--);
-                Pause();
-                Keys(); 
-            }
-            else Keys();
+
+            Keys();
 
             coord = col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH && row <= diceHeight + MAX_HEITH && row >= diceHeight - MIN_HEIGTH;
 
@@ -352,8 +347,13 @@ Villain's Health: {aiScore}");
                     Console.Write("quack");
                     break;
             }
+            //resetting the cursor if user hits boundary
+            if (row == 0 || col == 0 || col ==120 || row == 30)
+            {
+                row = Console.WindowHeight / 2;
+                col = Console.WindowWidth / 2;
+            }
             Console.SetCursorPosition(col, row);
-
     }
 
     static string DiceSprite()
