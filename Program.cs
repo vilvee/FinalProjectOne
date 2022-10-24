@@ -80,7 +80,7 @@ internal class Program
         Console.BackgroundColor = ConsoleColor.Red;
         Console.ForegroundColor = ConsoleColor.Black;
         const string S = "DICE ADVENTURERS";
-        Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH);
+        Console.SetCursorPosition( Console.WindowWidth/ DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH);
         Console.WriteLine(S);
         Console.ResetColor();
         DoublePause();
@@ -367,71 +367,71 @@ Villain's Health: {aiScore}");
 
         //wait for user to press Enter
         ConsoleKeyInfo key = Console.ReadKey();
-
-        for (count = 5; count >= 0; count--)
+        if (key.Key.Equals(ConsoleKey.Enter))
         {
-            if (key.Key.Equals(ConsoleKey.Enter))
+            Console.WriteLine("Press Enter to Roll");
+            for (count = 4; count >= 0; count--)
             {
-                Console.WriteLine("Press Enter to Roll");
-            }
-            Console.ReadLine();
 
-            if (myScore <= 0 || aiScore <= 0) EndGame();
+                
+                
 
-            int myRollOne = DiceRoll();
-            int myRollTwo = DiceRoll();
-            int aiRollOne = DiceRoll();
-            int aiRollTwo = DiceRoll();
+                if (myScore <= 0 || aiScore <= 0) EndGame();
 
-            Clear();
-            Console.WriteLine($"You have {count} rolls left");
-            Pause();
-            myTotal = myRollOne + myRollTwo;
-            aiTotal = aiRollOne + aiRollTwo;
-            Console.WriteLine(@$"
+                int myRollOne = DiceRoll();
+                int myRollTwo = DiceRoll();
+                int aiRollOne = DiceRoll();
+                int aiRollTwo = DiceRoll();
+
+                Clear();
+                Console.WriteLine($"You have {count} rolls left");
+                Pause();
+                myTotal = myRollOne + myRollTwo;
+                aiTotal = aiRollOne + aiRollTwo;
+                Console.WriteLine(@$"
         You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
            
         The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
 
-            if (myTotal > aiTotal)
-            {
-                Pause();
-                myScore -= aiTotal;
-                aiScore -= myTotal;
-                Console.WriteLine(@$"
+                if (myTotal > aiTotal)
+                {
+                    Pause();
+                    myScore -= aiTotal;
+                    aiScore -= myTotal;
+                    Console.WriteLine(@$"
         You landed a good hit!
 
         Your health is {myScore} and The Villain's health is {aiScore}
             
         Press Enter to contiue");
-            }
-            else if (myTotal < aiTotal)
-            {
-                Pause();
-                aiScore -= aiTotal;
-                myScore -= myTotal;
-                Console.WriteLine(@$"
+                }
+                else if (myTotal < aiTotal)
+                {
+                    Pause();
+                    aiScore -= aiTotal;
+                    myScore -= myTotal;
+                    Console.WriteLine(@$"
         You were clumsy!
 
         Your health is {myScore} and The Villain's health is {aiScore}
             
         Press Enter to contiue");
-            }
-            else
-            {
-                Pause();
-                aiScore += aiTotal;
-                myScore += myTotal;
-                Console.WriteLine(@$"
+                }
+                else
+                {
+                    Pause();
+                    aiScore += aiTotal;
+                    myScore += myTotal;
+                    Console.WriteLine(@$"
         You both rolled the same numbers.
 
         Your health is {myScore} and The Villain's health is {aiScore}
             
         Press Enter to contiue");
+                }
             }
+            Console.ReadLine();
         }
-        DoublePause();
-        DoublePause();
         Clear();
         if (myScore > aiScore)
         {
