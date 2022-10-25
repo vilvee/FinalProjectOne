@@ -7,12 +7,17 @@ using System.Windows;
 
 internal class Program
 {
-    //global scoring and keys variables
+    //===========================
+    // Global Variables Section
+    //===========================
     static int myScore = 300;
     static int aiScore = 500;
     static int row = Console.WindowHeight / 2;
     static int col = Console.WindowWidth / 2;
 
+    //==========================================
+    // Title of the console application and flow
+    //==========================================
     private static void Main()
     {
 
@@ -22,11 +27,17 @@ internal class Program
         StartMenu();
     }
 
+    //===========================
+    // Clear screeen
+    //===========================
     static void Clear()
     {
         Console.Clear();
     }
 
+    //===========================
+    // Satart menue selection
+    //===========================
     static int StartMenu()
     {
         do
@@ -40,14 +51,7 @@ internal class Program
     Please Enter a Choice
 ");
             //if the choice is invalid, set to default case and restart menu
-            bool itWorked = int.TryParse(Console.ReadLine(), out int choice);
-            if (!itWorked)
-            {
-                Console.Beep();
-                Console.Write("Invalid input, restarting menu...");
-                Pause();
-                Clear();
-            }
+            int.TryParse(Console.ReadLine(), out int choice);
 
             switch (choice)
             {
@@ -76,6 +80,10 @@ internal class Program
         while (true);
     }
 
+
+    //===========================
+    // Splash screen
+    //===========================
     static void Intro()
     {
         //splash screen
@@ -94,16 +102,25 @@ internal class Program
 
     }
 
+    //===========================
+    // Pause for 1 sec
+    //===========================
     static void Pause()
     {
         Thread.Sleep(1000);
     }
 
+    //===========================
+    // Pause fro 2 secs
+    //===========================
     static void DoublePause()
     {
         Thread.Sleep(2000);
     }
 
+    //===========================
+    // Exit countdown
+    //===========================
     static void End()
     {
 
@@ -116,6 +133,9 @@ internal class Program
         Clear();
     }
 
+    //===========================
+    // Idle play game
+    //===========================
     static void DiceGame()
     {
 
@@ -207,14 +227,21 @@ internal class Program
 
     }
 
+    //===========================
+    // Intro for adventure mode
+    //===========================
     static void IntroAdventure()
     {
         Console.WriteLine("\nDuring one villain's long long long long long long long and tedious battle monologue...");
+        DoublePause();
         DoublePause();
         Clear();
         Adventure();
     }
 
+    //===========================
+    // Roll a random dice
+    //===========================
     static int DiceRoll()
     {
         //new random dice
@@ -223,6 +250,9 @@ internal class Program
         return roll;
     }
 
+    //===========================
+    // Flow of the adventure game
+    //===========================
     static void Adventure()
     {
         //level progression
@@ -237,6 +267,9 @@ internal class Program
         End();
     }
 
+    //=======================================
+    // Coordinates for the dice sprite height
+    //=======================================
     static int CoordinatesWidth()
     {
         int[] numbers = Enumerable.Range(10, 100).ToArray();
@@ -246,6 +279,9 @@ internal class Program
         return rdNumber;
     }
 
+    //=======================================
+    // Coordinates for the dice sprite width
+    //=======================================
     static int CoordinatesHeight()
     {
         int[] numbers = Enumerable.Range(5, 29).ToArray();
@@ -255,6 +291,9 @@ internal class Program
         return rdNumber;
     }
 
+    //=======================================
+    // Villain dialogue
+    //=======================================
     static string Prompt()
     {
         //REF for the speech:https://www.scoopwhoop.com/entertainment/times-villains-made-sense-and-convinced-us-they-were-right/
@@ -274,6 +313,9 @@ internal class Program
         return talking;
     }
 
+    //=======================================
+    // Adventure levels
+    //=======================================
     static void Level()
     {
         //screen width = 120
@@ -318,6 +360,9 @@ Villain's Health: {aiScore}");
         Clear();
     }
 
+    //=======================================
+    // NAvigation keys
+    //=======================================
     static void Keys()
     {
         ConsoleKeyInfo key;
@@ -353,8 +398,7 @@ Villain's Health: {aiScore}");
             //resetting the cursor if user hits boundary
             if (row == minHeightWidth)
             {
-                row = maxHeight;
-                
+                row = maxHeight;   
             }
             else if (col == minHeightWidth)
             {
@@ -372,6 +416,10 @@ Villain's Health: {aiScore}");
             Console.SetCursorPosition(col, row);
     }
 
+
+    //=======================================
+    // Dice images
+    //=======================================
     static string DiceSprite()
     {
         //array display the image of dice
@@ -381,6 +429,10 @@ Villain's Health: {aiScore}");
         return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
     }
 
+
+    //=======================================
+    // Fight fro adventure mode
+    //=======================================
     static void BossFight()
     {
 
@@ -402,9 +454,6 @@ Villain's Health: {aiScore}");
             Console.WriteLine("Press Enter to Roll");
             for (count = 4; count >= 0; count--)
             {
-
-                
-                
 
                 if (myScore <= 0 || aiScore <= 0) EndGame();
 
@@ -435,7 +484,6 @@ Villain's Health: {aiScore}");
             
         Press Enter to contiue");
                 }
-                //
                 else if (myTotal < aiTotal)
                 {
                     Pause();
@@ -487,6 +535,10 @@ Villain's Health: {aiScore}");
         Clear();
     }
 
+
+    //=======================================
+    // Final fight for adventure mode
+    //=======================================
     static void FinalFight()
     {
 
@@ -579,6 +631,10 @@ Villain's Health: {aiScore}");
         Clear();
     }
 
+
+    //=======================================
+    // End game conditions
+    //=======================================
     static void EndGame()
     {
         if (myScore <= 0 || myScore < aiScore)
@@ -595,6 +651,10 @@ Villain's Health: {aiScore}");
 
     }
 
+
+    //=======================================
+    // Game credits
+    //=======================================
     static void Credits()
     {
         const int MINUS_WIDTH = 10;
