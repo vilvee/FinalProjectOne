@@ -398,7 +398,12 @@ Villain's Health: {aiScore}");
             //resetting the cursor if user hits boundary
             if (row == minHeightWidth)
             {
+<<<<<<< HEAD
                 row = maxHeight;   
+=======
+                row = maxHeight;
+                
+>>>>>>> 6eafc56eee127b6fa40eea0e059ac693f3ffd42d
             }
             else if (col == minHeightWidth)
             {
