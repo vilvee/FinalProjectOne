@@ -321,6 +321,9 @@ Villain's Health: {aiScore}");
     static void Keys()
     {
         ConsoleKeyInfo key;
+        int minHeightWidth =0;
+        int maxHeight =29;
+        int maxWidth =119;
  //set the cursor's new position
 
             key = Console.ReadKey(true);
@@ -348,11 +351,24 @@ Villain's Health: {aiScore}");
                     break;
             }
             //resetting the cursor if user hits boundary
-            if (row == 0 || col == 0 || col ==120 || row == 30)
+            if (row == minHeightWidth)
             {
-                row = Console.WindowHeight / 2;
-                col = Console.WindowWidth / 2;
+                row = maxHeight;
+                
             }
+            else if (col == minHeightWidth)
+            {
+                col = maxWidth;
+            }
+            else if (row == maxHeight)
+            {
+                row = minHeightWidth;
+            }
+            else if (col ==maxWidth)
+            {
+                col = minHeightWidth;
+            }
+
             Console.SetCursorPosition(col, row);
     }
 
