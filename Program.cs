@@ -23,7 +23,7 @@ internal class Program
 
         Console.Title = "DICE ADVENTURERS";
         Intro();
-        Pause();
+        Pause(4000);
         StartMenu();
     }
 
@@ -72,7 +72,7 @@ internal class Program
                  default:
                     Console.Beep();
                     Console.Write("Invalid input, restarting menu...");
-                    Pause();
+                    Pause(1000);
                     Console.Clear();
                     break;
             }
@@ -96,26 +96,18 @@ internal class Program
         const string S = "DICE ADVENTURERS";
         Console.SetCursorPosition( Console.WindowWidth/ DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH);
         Console.WriteLine(S);
+        Pause(4000);
         Console.ResetColor();
-        DoublePause();
         Clear();
 
     }
 
     //===========================
-    // Pause for 1 sec
+    // Pause for n secs
     //===========================
-    static void Pause()
+    static void Pause(int ts)
     {
-        Thread.Sleep(1000);
-    }
-
-    //===========================
-    // Pause fro 2 secs
-    //===========================
-    static void DoublePause()
-    {
-        Thread.Sleep(2000);
+        Thread.Sleep(ts);
     }
 
     //===========================
@@ -128,7 +120,7 @@ internal class Program
         for (int i = 5; i >= 0; i--)
         {
             Console.Write($"\rThe Game will quit in {i} ");
-            Pause();
+            Pause(1000);
         }
         Clear();
     }
@@ -158,7 +150,7 @@ internal class Program
 
             Clear();
             Console.WriteLine($"You have {count} rolls left");
-            Pause();
+            Pause(1000);
 
             Console.WriteLine(@$"
         You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
@@ -167,7 +159,7 @@ internal class Program
 
             if (myTotal > aiTotal)
             {
-                Pause();
+                Pause(1000);
                 myScore += myTotal;
                 Console.WriteLine(@$"
         You won the round
@@ -178,7 +170,7 @@ internal class Program
             }
             else if (myTotal < aiTotal)
             {
-                Pause();
+                Pause(1000);
                 aiScore += aiTotal;
                 Console.WriteLine(@$"
         You lost the round.
@@ -189,7 +181,7 @@ internal class Program
             }
             else
             {
-                Pause();
+                Pause(1000);
                 aiScore += aiTotal;
                 myScore += myTotal;
                 Console.WriteLine(@$"
@@ -215,7 +207,7 @@ internal class Program
             }
             else
             {
-                Pause();
+                Pause(1000);
                 Console.WriteLine(@$"
     YOU LOST!
 
@@ -233,8 +225,7 @@ internal class Program
     static void IntroAdventure()
     {
         Console.WriteLine("\nDuring one villain's long long long long long long long and tedious battle monologue...");
-        DoublePause();
-        DoublePause();
+        Pause(5000);
         Clear();
         Adventure();
     }
@@ -334,10 +325,10 @@ internal class Program
 Villain's Health: {aiScore}");
 
         Console.WriteLine(Prompt());
-        Pause();
+        Pause(1000);
 
         Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain\nPress Q to quit");
-        Pause();
+        Pause(1000);
 
         //dice will generate at this position
         Console.SetCursorPosition(diceWitdth, diceHeight);
@@ -429,7 +420,7 @@ Villain's Health: {aiScore}");
 
 
     //=======================================
-    // Fight fro adventure mode
+    // Fight for adventure mode
     //=======================================
     static void BossFight()
     {
@@ -462,7 +453,7 @@ Villain's Health: {aiScore}");
 
                 Clear();
                 Console.WriteLine($"You have {count} rolls left");
-                Pause();
+                Pause(1000);
                 myTotal = myRollOne + myRollTwo;
                 aiTotal = aiRollOne + aiRollTwo;
                 Console.WriteLine(@$"
@@ -472,7 +463,7 @@ Villain's Health: {aiScore}");
 
                 if (myTotal > aiTotal)
                 {
-                    Pause();
+                    Pause(1000);
                     myScore -= aiTotal;
                     aiScore -= myTotal;
                     Console.WriteLine(@$"
@@ -484,7 +475,7 @@ Villain's Health: {aiScore}");
                 }
                 else if (myTotal < aiTotal)
                 {
-                    Pause();
+                    Pause(1000);
                     aiScore -= aiTotal;
                     myScore -= myTotal;
                     Console.WriteLine(@$"
@@ -496,7 +487,7 @@ Villain's Health: {aiScore}");
                 }
                 else
                 {
-                    Pause();
+                    Pause(1000);
                     aiScore += aiTotal;
                     myScore += myTotal;
                     Console.WriteLine(@$"
@@ -517,8 +508,7 @@ Villain's Health: {aiScore}");
 
     Your final health is {myScore}
     The Villain's is {aiScore}");
-                DoublePause();
-                DoublePause();
+                Pause(4000);
             }
             else
             {
@@ -527,8 +517,7 @@ Villain's Health: {aiScore}");
 
     Your final health is {myScore}
     The Villain's is {aiScore}");
-                DoublePause();
-                DoublePause();
+                Pause(4000);
             }
         
         Clear();
@@ -591,7 +580,7 @@ static void WaitForKey(ConsoleKey key, ConsoleModifiers modifiers = default)
             Console.WriteLine("{0} ", c);
             Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH_NAME);
             Console.WriteLine("Veronika Vilenski");
-            DoublePause();
+            Pause(2000);
             Clear();
         }
         Console.ResetColor();
