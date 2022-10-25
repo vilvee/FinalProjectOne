@@ -23,7 +23,6 @@ internal class Program
 
         Console.Title = "DICE ADVENTURERS";
         Intro();
-        Pause(4000);
         StartMenu();
     }
 
@@ -225,7 +224,7 @@ internal class Program
     static void IntroAdventure()
     {
         Console.WriteLine("\nDuring one villain's long long long long long long long and tedious battle monologue...");
-        Pause(5000);
+        Pause(4000);
         Clear();
         Adventure();
     }
@@ -425,6 +424,7 @@ Villain's Health: {aiScore}");
         const int ARRAY_MIN = 0;
         const int ARRAY_MAX = 5;
         string[] dice = { "[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]" };
+        
         return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
     }
 
