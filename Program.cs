@@ -307,7 +307,12 @@ internal class Program
     //=======================================
     static void Level()
     {
-        string levelOne = DiceSprite();
+        //Dice sprite and the coresponding Index
+        (string sprite,int indexSprite) levelOne = new Program().DiceSprite();
+        string diceSprite= levelOne.sprite;
+        int spriteIndex = levelOne.indexSprite;
+
+        //Random dice coordinates
         int diceWitdth = CoordinatesWidth();
         int diceHeight = CoordinatesHeight();
 
@@ -317,12 +322,11 @@ internal class Program
         const int MAX_WIDTH = 2;
         const int MAX_HEITH = 2;
 
-
-
         Console.WriteLine($@"Your Health :     {myScore}
 Villain's Health: {aiScore}");
 
-        Console.WriteLine(Prompt());
+        //Villain talks
+        Console.WriteLine("\nVillain: " + Prompt());
         Pause(1000);
 
         Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain\nPress Q to quit");
@@ -330,7 +334,8 @@ Villain's Health: {aiScore}");
 
         //dice will generate at this position
         Console.SetCursorPosition(diceWitdth, diceHeight);
-        Console.Write(levelOne);
+        Console.Write(levelOne.sprite);
+
         //start game at this position
         Console.SetCursorPosition(col, row);
         bool coord;
@@ -343,6 +348,12 @@ Villain's Health: {aiScore}");
 
         } while (!coord);
 
+        Clear();
+
+        //Bonus hit
+        Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
+        aiScore -= levelOne.indexSprite;
+        Pause(4000);
         Clear();
     }
 
@@ -407,13 +418,22 @@ Villain's Health: {aiScore}");
     //=======================================
     // Dice images
     //=======================================
-    static string DiceSprite()
+    public (string, int)  DiceSprite()
     {
         //array display the image of dice
         const int ARRAY_MIN = 0;
         const int ARRAY_MAX = 5;
-        string[] dice = { "[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]" };
-        return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
+        const int addToArray = 1;
+        string[] dice = {"[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]"};
+        Random random = new Random();
+        int rdDice = random.Next(ARRAY_MIN, ARRAY_MAX);
+        string diceSprite = dice[rdDice];
+        int diceIndex = Array.IndexOf(dice, diceSprite); // rdDice is already the index of the dice
+        (string, int) diceReturn;
+        diceReturn.Item1 = diceSprite;
+        diceReturn.Item2 = diceIndex + addToArray;
+        return diceReturn;
+        // return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
     }
 
 
