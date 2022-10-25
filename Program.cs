@@ -367,8 +367,8 @@ Villain's Health: {aiScore}");
     {
         ConsoleKeyInfo key;
         int minHeightWidth =0;
-        int maxHeight =29;
-        int maxWidth =119;
+        int maxHeight =Console.WindowHeight;
+        int maxWidth =Console.WindowWidth;
  //set the cursor's new position
 
             key = Console.ReadKey(true);
@@ -398,12 +398,8 @@ Villain's Health: {aiScore}");
             //resetting the cursor if user hits boundary
             if (row == minHeightWidth)
             {
-<<<<<<< HEAD
-                row = maxHeight;   
-=======
                 row = maxHeight;
-                
->>>>>>> 6eafc56eee127b6fa40eea0e059ac693f3ffd42d
+                row = maxHeight;
             }
             else if (col == minHeightWidth)
             {
