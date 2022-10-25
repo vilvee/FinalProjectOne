@@ -96,7 +96,7 @@ internal class Program
         const string S = "DICE ADVENTURERS";
         Console.SetCursorPosition( Console.WindowWidth/ DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH);
         Console.WriteLine(S);
-        Pause(4000);
+        Pause(2000);
         Console.ResetColor();
         Clear();
 
@@ -273,7 +273,7 @@ internal class Program
     //=======================================
     static int CoordinatesHeight()
     {
-        int[] numbers = Enumerable.Range(5, 29).ToArray();
+        int[] numbers = Enumerable.Range(5, 25).ToArray();
         Random coordinates = new();
         int index = coordinates.Next(0, numbers.Length);
         int rdNumber = numbers[index];
@@ -312,13 +312,6 @@ internal class Program
         int diceHeight = CoordinatesHeight();
 
         //range to initiate BossFight
-        const int MIN_WIDTH = 2;
-        const int MIN_HEIGTH = 2;
-        const int MAX_WIDTH = 2;
-        const int MAX_HEITH = 2;
-
-
-
         Console.WriteLine($@"Your Health :     {myScore}
 Villain's Health: {aiScore}");
 
@@ -336,10 +329,9 @@ Villain's Health: {aiScore}");
         bool coord;
         do
         {   
-
             Keys();
 
-            coord = col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH && row <= diceHeight + MAX_HEITH && row >= diceHeight - MIN_HEIGTH;
+            coord = row == diceHeight  && col == diceWitdth;
 
         } while (!coord);
 
@@ -412,7 +404,37 @@ Villain's Health: {aiScore}");
         //array display the image of dice
         const int ARRAY_MIN = 0;
         const int ARRAY_MAX = 5;
-        string[] dice = { "[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]" };
+        string[] dice = new string[6];
+        dice [0] = @"+-------+
+|       |
+|   O   |
+|       |
++-------+";
+        dice [1]= @"+-------+
+|       |
+| O   O |
+|       |
++-------+";
+        dice [2]= @"+-------+
+| O     |
+|   O   |
+|     O |
++-------+";
+        dice [3]= @"+-------+
+| O   O |
+|       |
+| O   O |
++-------+";
+        dice [4]= @"+-------+
+| O   O |
+|   O   |
+| O   O |
++-------+";
+        dice [5]= @"+-------+
+| O   O |
+| O   O |
+| O   O |
++-------+";
         return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
     }
 
