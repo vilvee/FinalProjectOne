@@ -96,7 +96,7 @@ internal class Program
         const string S = "DICE ADVENTURERS";
         Console.SetCursorPosition( Console.WindowWidth/ DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH);
         Console.WriteLine(S);
-        Pause(4000);
+        Pause(2000);
         Console.ResetColor();
         Clear();
 
@@ -273,7 +273,7 @@ internal class Program
     //=======================================
     static int CoordinatesHeight()
     {
-        int[] numbers = Enumerable.Range(5, 29).ToArray();
+        int[] numbers = Enumerable.Range(5, 25).ToArray();
         Random coordinates = new();
         int index = coordinates.Next(0, numbers.Length);
         int rdNumber = numbers[index];
@@ -322,6 +322,8 @@ internal class Program
         const int MAX_WIDTH = 2;
         const int MAX_HEITH = 2;
 
+
+
         Console.WriteLine($@"Your Health :     {myScore}
 Villain's Health: {aiScore}");
 
@@ -341,10 +343,9 @@ Villain's Health: {aiScore}");
         bool coord;
         do
         {   
-
             Keys();
 
-            coord = col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH && row <= diceHeight + MAX_HEITH && row >= diceHeight - MIN_HEIGTH;
+            coord = row == diceHeight  && col == diceWitdth;
 
         } while (!coord);
 
@@ -423,17 +424,8 @@ Villain's Health: {aiScore}");
         //array display the image of dice
         const int ARRAY_MIN = 0;
         const int ARRAY_MAX = 5;
-        const int addToArray = 1;
-        string[] dice = {"[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]"};
-        Random random = new Random();
-        int rdDice = random.Next(ARRAY_MIN, ARRAY_MAX);
-        string diceSprite = dice[rdDice];
-        int diceIndex = Array.IndexOf(dice, diceSprite); // rdDice is already the index of the dice
-        (string, int) diceReturn;
-        diceReturn.Item1 = diceSprite;
-        diceReturn.Item2 = diceIndex + addToArray;
-        return diceReturn;
-        // return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
+        string[] dice = { "[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]" };
+        return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
     }
 
 
