@@ -105,9 +105,9 @@ internal class Program
     //===========================
     // Pause for n secs
     //===========================
-    static void Pause(int ts)
+    static void Pause(int time)
     {
-        Thread.Sleep(ts);
+        Thread.Sleep(time);
     }
 
     //===========================
@@ -308,8 +308,6 @@ internal class Program
     static void Level()
     {
         string levelOne = DiceSprite();
-        int PLAY_WIDTH = Console.WindowWidth /2;
-        int PLAY_HEIGTH = Console.WindowHeight/2;
         int diceWitdth = CoordinatesWidth();
         int diceHeight = CoordinatesHeight();
 
@@ -334,7 +332,7 @@ Villain's Health: {aiScore}");
         Console.SetCursorPosition(diceWitdth, diceHeight);
         Console.Write(levelOne);
         //start game at this position
-        Console.SetCursorPosition(PLAY_WIDTH, PLAY_HEIGTH);
+        Console.SetCursorPosition(col, row);
         bool coord;
         do
         {   
@@ -357,8 +355,8 @@ Villain's Health: {aiScore}");
         int minHeightWidth =0;
         int maxHeight =Console.WindowHeight-1;
         int maxWidth =Console.WindowWidth-1;
- //set the cursor's new position
-
+        
+        //set the cursor's new position
             key = Console.ReadKey(true);
             switch (key.Key)
             {
@@ -428,7 +426,6 @@ Villain's Health: {aiScore}");
         int myTotal;
         int aiTotal;
         int count;
-        ConsoleKeyInfo key = Console.ReadKey();
 
         //=====================================
         //5 turns to play. Two dice are rolled.
@@ -439,7 +436,9 @@ Villain's Health: {aiScore}");
         Console.WriteLine(@$"
     You have 5 turns to attack the Villainl
     Press Enter to Roll");
-       
+            
+            //wait for Enter input
+            ConsoleKeyInfo key = Console.ReadKey();
             WaitForKey(ConsoleKey.Enter);
             for (count = 4; count >= 0; count--)
             {
@@ -523,10 +522,10 @@ Villain's Health: {aiScore}");
         Clear();
     }
 
-//==================================
-//Wait for key input
-//https://stackoverflow.com/questions/71315422/make-user-press-specific-key-to-progress-in-program
-//==================================
+    //==================================
+    //Wait for key input
+    //https://stackoverflow.com/questions/71315422/make-user-press-specific-key-to-progress-in-program
+    //==================================
 static void WaitForKey(ConsoleKey key, ConsoleModifiers modifiers = default)
 {
     while (true)
