@@ -256,13 +256,11 @@ internal class Program
     static void Adventure()
     {
         //level progression
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             Level();
             BossFight();
         }
-        Level();
-        FinalFight();
         EndGame();
         End();
     }
@@ -297,7 +295,7 @@ internal class Program
     static string Prompt()
     {
         //REF for the speech:https://www.scoopwhoop.com/entertainment/times-villains-made-sense-and-convinced-us-they-were-right/
-        string[] talk = { "You (humans) move to an area and you multiply and multiply until " +
+        string[] talk = {"You (humans) move to an area and you multiply and multiply until " +
                 "every natural resource is consumed and the only way you can survive is to spread to another area...",
                 " You had a bad day once, am I right?… You had a bad day and everything changed. Why else would you...",
                 "And in a supreme act of selfishness shattered history like a rank amateur, " +
@@ -318,13 +316,12 @@ internal class Program
     //=======================================
     static void Level()
     {
-        //screen width = 120
-        //screen height = 30
         string levelOne = DiceSprite();
         int PLAY_WIDTH = Console.WindowWidth /2;
         int PLAY_HEIGTH = Console.WindowHeight/2;
         int diceWitdth = CoordinatesWidth();
         int diceHeight = CoordinatesHeight();
+
         //range to initiate BossFight
         const int MIN_WIDTH = 2;
         const int MIN_HEIGTH = 2;
@@ -440,19 +437,19 @@ Villain's Health: {aiScore}");
         int myTotal;
         int aiTotal;
         int count;
+        ConsoleKeyInfo key = Console.ReadKey();
 
+        //=====================================
         //5 turns to play. Two dice are rolled.
         //The total is substracted from HP.
         //Once one reaches 0 game over
+        //====================================
+
         Console.WriteLine(@$"
     You have 5 turns to attack the Villainl
     Press Enter to Roll");
-
-        //wait for user to press Enter
-        ConsoleKeyInfo key = Console.ReadKey();
-        if (key.Key.Equals(ConsoleKey.Enter))
-        {
-            Console.WriteLine("Press Enter to Roll");
+       
+            WaitForKey(ConsoleKey.Enter);
             for (count = 4; count >= 0; count--)
             {
 
@@ -509,129 +506,47 @@ Villain's Health: {aiScore}");
             
         Press Enter to contiue");
                 }
+                WaitForKey(ConsoleKey.Enter);
+
             }
-            Console.ReadLine();
-        }
-        Clear();
-        if (myScore > aiScore)
-        {
-            Console.WriteLine(@$"
+            Clear();
+            if (myScore > aiScore)
+            {
+                Console.WriteLine(@$"
     You had a good fight!
 
     Your final health is {myScore}
     The Villain's is {aiScore}");
-            DoublePause();
-            DoublePause();
-        }
-        else
-        {
-            Console.WriteLine(@$"
+                DoublePause();
+                DoublePause();
+            }
+            else
+            {
+                Console.WriteLine(@$"
     You call this a fight?!!
 
     Your final health is {myScore}
     The Villain's is {aiScore}");
-            DoublePause();
-            DoublePause();
-        }
+                DoublePause();
+                DoublePause();
+            }
+        
         Clear();
     }
 
-
-    //=======================================
-    // Final fight for adventure mode
-    //=======================================
-    static void FinalFight()
+//==================================
+//Wait for key input
+//https://stackoverflow.com/questions/71315422/make-user-press-specific-key-to-progress-in-program
+//==================================
+static void WaitForKey(ConsoleKey key, ConsoleModifiers modifiers = default)
+{
+    while (true)
     {
-
-        int myTotal;
-        int aiTotal;
-        int count;
-
-        //5 turns to play
-        //Two dice are rolled
-        //Boss gets additional dice
-        //The total is substracted from HP
-        //Once one reaches 0 game over
-
-        Console.WriteLine(@$"
-    You have 5 turns to attack the Villain");
-        //wait for user to press Enter
-        ConsoleKeyInfo key = Console.ReadKey();
-
-        if (key.Key.Equals(ConsoleKey.Enter))
-        {
-            Console.WriteLine("Enter Press to Roll");
-        }
-        Console.ReadLine();
-
-        for (count = 5; count >= 0; count--)
-        {
-
-            if (myScore <= 0 || aiScore <= 0)
-            {
-                EndGame();
-            }
-            //Boss gets additional dice
-            int myRollOne = DiceRoll();
-            int myRollTwo = DiceRoll();
-            int aiRollOne = DiceRoll();
-            int aiRollTwo = DiceRoll();
-            int aiRollThree = DiceRoll();
-
-            Clear();
-            Console.WriteLine($"You have {count} rolls left");
-            Pause();
-            myTotal = myRollOne + myRollTwo;
-            aiTotal = aiRollOne + aiRollTwo + aiRollThree;
-            Console.WriteLine(@$"
-        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
-           
-        The Villain rolled a {aiRollOne},{aiRollTwo}, and a {aiRollThree} with a total of {aiTotal}");
-
-            if (myTotal > aiTotal)
-            {
-                Pause();
-                myScore -= aiTotal;
-                aiScore -= myTotal;
-                Console.WriteLine(@$"
-        You landed a good hit!
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-                Console.ReadKey();
-            }
-            else if (myTotal < aiTotal)
-            {
-                Pause();
-                aiScore -= aiTotal;
-                myScore -= myTotal;
-                Console.WriteLine(@$"
-        You were clumsy!
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-                Console.ReadKey();
-            }
-            else
-            {
-                Pause();
-                aiScore += aiTotal;
-                myScore += myTotal;
-                Console.WriteLine(@$"
-        You both rolled the same numbers.
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-
-                Console.ReadKey();
-            }
-        }
-        Clear();
+        var keyInfo = Console.ReadKey(true);
+        if (keyInfo.Key == key && keyInfo.Modifiers == modifiers)
+            return;
     }
-
+}
 
     //=======================================
     // End game conditions
