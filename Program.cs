@@ -321,8 +321,8 @@ internal class Program
         //screen width = 120
         //screen height = 30
         string levelOne = DiceSprite();
-        const int PLAY_WIDTH = 60;
-        const int PLAY_HEIGTH = 15;
+        int PLAY_WIDTH = Console.WindowWidth /2;
+        int PLAY_HEIGTH = Console.WindowHeight/2;
         int diceWitdth = CoordinatesWidth();
         int diceHeight = CoordinatesHeight();
         //range to initiate BossFight
@@ -361,7 +361,7 @@ Villain's Health: {aiScore}");
     }
 
     //=======================================
-    // NAvigation keys
+    // Navigation keys
     //=======================================
     static void Keys()
     {
