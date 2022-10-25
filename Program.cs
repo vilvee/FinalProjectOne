@@ -367,8 +367,8 @@ Villain's Health: {aiScore}");
     {
         ConsoleKeyInfo key;
         int minHeightWidth =0;
-        int maxHeight =Console.WindowHeight;
-        int maxWidth =Console.WindowWidth;
+        int maxHeight =Console.WindowHeight-1;
+        int maxWidth =Console.WindowWidth-1;
  //set the cursor's new position
 
             key = Console.ReadKey(true);
