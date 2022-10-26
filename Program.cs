@@ -423,9 +423,16 @@ Villain's Health: {aiScore}");
         //array display the image of dice
         const int ARRAY_MIN = 0;
         const int ARRAY_MAX = 5;
+        const int offSet = 1;
         string[] dice = { "[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]" };
-        
-        return dice[new Random().Next(ARRAY_MIN, ARRAY_MAX)];
+        Random diceRd = new Random();
+        int diceSpriteNum = diceRd.Next(ARRAY_MIN, ARRAY_MAX);
+        string diceSprite = dice[diceSpriteNum];
+        int spriteIndex = Array.IndexOf(dice, diceSprite);
+        (string, int) sprites;
+        sprites.Item1 = diceSprite;
+        sprites.Item2 = spriteIndex + offSet;
+        return sprites;
     }
 
 
