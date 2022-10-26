@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Windows;
+using System.Timers;
 
 internal class Program
 {
@@ -14,6 +15,7 @@ internal class Program
     static int aiScore = 500;
     static int row = Console.WindowHeight / 2;
     static int col = Console.WindowWidth / 2;
+
 
     //==========================================
     // Title of the console application and flow
@@ -206,11 +208,20 @@ internal class Program
         return talking;
     }
 
+static void GameCountdown()
+{
+       TimeSpan interval = new TimeSpan();
+     Console.WriteLine(interval.ToString());    
+}
+
+
     //=======================================
     // Adventure levels
     //=======================================
     static void Level()
     {
+        int bonusHit = 0;
+
         //Dice sprite and the coresponding Index
         (string sprite,int indexSprite) levelOne = new Program().DiceSprite();
         string diceSprite= levelOne.sprite;
@@ -223,7 +234,6 @@ internal class Program
         //range to initiate BossFight
         const int MIN_WIDTH = 2;
         const int MAX_WIDTH = 2;
-
         Console.WriteLine($@"Your Health :     {myScore}
 Villain's Health: {aiScore}");
 
@@ -234,13 +244,18 @@ Villain's Health: {aiScore}");
         Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain\nPress Q to quit");
         Pause(1000);
 
+        GameCountdown();
+        
+
+        bool coord; 
+        
         //dice will generate at this position
         Console.SetCursorPosition(diceWitdth, diceHeight);
         Console.Write(levelOne.sprite);
 
         //start game at this position
         Console.SetCursorPosition(col, row);
-        bool coord;
+
         do
         {   
             Keys();
@@ -253,7 +268,11 @@ Villain's Health: {aiScore}");
 
         //Bonus hit
         Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
-        aiScore -= levelOne.indexSprite;
+        bonusHit += levelOne.indexSprite;
+        aiScore -= bonusHit;
+        Console.WriteLine($"You got a total Bonus of {bonusHit}.");
+        Pause(1000);
+        
         Pause(4000);
         Clear();
     }
