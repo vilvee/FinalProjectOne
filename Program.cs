@@ -365,7 +365,6 @@ Villain's Health: {aiScore}");
     Press Enter to Roll");
             
             //wait for Enter input
-            ConsoleKeyInfo key = Console.ReadKey();
             WaitForKey(ConsoleKey.Enter);
             for (count = 4; count >= 0; count--)
             {
