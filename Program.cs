@@ -215,7 +215,7 @@ internal class Program
 
         //range to initiate BossFight
         const int MIN_WIDTH = 2;
-        const int MAX_WIDTH = 2;
+        const int MAX_WIDTH = 6;
         Console.WriteLine($@"Your Health :     {myScore}
 Villain's Health: {aiScore}");
 
@@ -228,37 +228,37 @@ Villain's Health: {aiScore}");
 
         for (int i = 0; i < 5; i++)
         {
-        //Dice sprite and the coresponding Index
-        (string sprite,int indexSprite) levelOne = new Program().DiceSprite();
-        string diceSprite= levelOne.sprite;
-        int spriteIndex = levelOne.indexSprite;
+            //Dice sprite and the coresponding Index
+            (string sprite, int indexSprite) levelOne = new Program().DiceSprite();
+            string diceSprite = levelOne.sprite;
+            int spriteIndex = levelOne.indexSprite;
 
-        //Random dice coordinates
-        int diceWitdth = CoordinatesWidth();
-        int diceHeight = CoordinatesHeight();
-        bool coord; 
-        
-        //dice will generate at this position
-        Console.SetCursorPosition(diceWitdth, diceHeight);
-        Console.Write(levelOne.sprite);
+            //Random dice coordinates
+            int diceWitdth = CoordinatesWidth();
+            int diceHeight = CoordinatesHeight();
+            bool coord;
 
-        //start game at this position
-        Console.SetCursorPosition(col, row);
+            //dice will generate at this position
+            Console.SetCursorPosition(diceWitdth, diceHeight);
+            Console.Write(levelOne.sprite);
 
-        do
-        {   
-            Keys();
+            //start game at this position
+            Console.SetCursorPosition(col, row);
 
-            coord = row == diceHeight && col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH ;
+            do
+            {
+                Keys();
 
-        } while (!coord);
+                coord = row == diceHeight && col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH;
 
-        Clear();
+            } while (!coord);
 
-        //Bonus hit
-        Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
-        bonusHit += levelOne.indexSprite;
-        aiScore -= bonusHit;
+            Clear();
+
+            //Bonus hit
+            Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
+            bonusHit += levelOne.indexSprite;
+            aiScore -= bonusHit;
         }
         Console.WriteLine($"You got a total Bonus of {bonusHit}.");
         Pause(1000);
