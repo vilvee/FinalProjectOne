@@ -60,7 +60,7 @@ internal class Program
                     break;
                 case 2:
                     Clear();
-                    DiceGame();
+                    BossFight();
                     break;
                 case 3:
                     Clear();
@@ -78,7 +78,6 @@ internal class Program
         }
         while (true);
     }
-
 
     //===========================
     // Splash screen
@@ -122,100 +121,6 @@ internal class Program
             Pause(1000);
         }
         Clear();
-    }
-
-    //===========================
-    // Idle play game
-    //===========================
-    static void DiceGame()
-    {
-
-        int count;
-        int myRollOne = DiceRoll();
-        int myRollTwo = DiceRoll();
-        int aiRollOne = DiceRoll();
-        int aiRollTwo = DiceRoll();
-        int myTotal = myRollOne + myRollTwo;
-        int aiTotal = aiRollOne + aiRollTwo;
-
-        Console.WriteLine(@$"
-    You have 5 turns to beat the Enemy AI
-    Please, press Enter to roll");
-
-        //5 rounds
-        for (count = 5; count >= 0; count--)
-        {
-
-
-            Clear();
-            Console.WriteLine($"You have {count} rolls left");
-            Pause(1000);
-
-            Console.WriteLine(@$"
-        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
-           
-        Enemy AI rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
-
-            if (myTotal > aiTotal)
-            {
-                Pause(1000);
-                myScore += myTotal;
-                Console.WriteLine(@$"
-        You won the round
-        Your score is {myScore} and the Enemy AI score is {aiScore}
-            
-        Press Enter to contiue");
-                Console.ReadKey();
-            }
-            else if (myTotal < aiTotal)
-            {
-                Pause(1000);
-                aiScore += aiTotal;
-                Console.WriteLine(@$"
-        You lost the round.
-        Your score is {myScore} and the Enemy AI score is {aiScore}
-            
-        Press Enter to contiue");
-                Console.ReadKey();
-            }
-            else
-            {
-                Pause(1000);
-                aiScore += aiTotal;
-                myScore += myTotal;
-                Console.WriteLine(@$"
-        You both rolled the same numbers.
-        Your score is {myScore} and the Enemy AI score is {aiScore}
-            
-        Press Enter to contiue");
-
-                Console.ReadKey();
-            }
-        }
-        Console.ReadKey();
-        Clear();
-        {
-            if (myScore > aiScore)
-            {
-
-                Console.WriteLine(@$"
-    YOU WON!
-
-    Your final score is {myScore}
-    The AI's score is {aiScore}");
-            }
-            else
-            {
-                Pause(1000);
-                Console.WriteLine(@$"
-    YOU LOST!
-
-    Your final score is {myScore}
-    The AI's score is {aiScore}");
-            }
-        }
-        End();
-
     }
 
     //===========================
@@ -272,7 +177,7 @@ internal class Program
     //=======================================
     static int CoordinatesHeight()
     {
-        int[] numbers = Enumerable.Range(5, 25).ToArray();
+        int[] numbers = Enumerable.Range(5, 20).ToArray();
         Random coordinates = new();
         int index = coordinates.Next(0, numbers.Length);
         int rdNumber = numbers[index];
@@ -317,11 +222,7 @@ internal class Program
 
         //range to initiate BossFight
         const int MIN_WIDTH = 2;
-        const int MIN_HEIGTH = 2;
         const int MAX_WIDTH = 2;
-        const int MAX_HEITH = 2;
-
-
 
         Console.WriteLine($@"Your Health :     {myScore}
 Villain's Health: {aiScore}");
@@ -344,7 +245,7 @@ Villain's Health: {aiScore}");
         {   
             Keys();
 
-            coord = row == diceHeight  && col == diceWitdth;
+            coord = row == diceHeight && col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH ;
 
         } while (!coord);
 
@@ -414,7 +315,6 @@ Villain's Health: {aiScore}");
             Console.SetCursorPosition(col, row);
     }
 
-
     //=======================================
     // Dice images
     //=======================================
@@ -434,7 +334,6 @@ Villain's Health: {aiScore}");
         sprites.Item2 = spriteIndex + offSet;
         return sprites;
     }
-
 
     //=======================================
     // Fight for adventure mode
@@ -545,7 +444,7 @@ Villain's Health: {aiScore}");
     //Wait for key input
     //https://stackoverflow.com/questions/71315422/make-user-press-specific-key-to-progress-in-program
     //==================================
-static void WaitForKey(ConsoleKey key, ConsoleModifiers modifiers = default)
+    static void WaitForKey(ConsoleKey key, ConsoleModifiers modifiers = default)
 {
     while (true)
     {
@@ -573,7 +472,6 @@ static void WaitForKey(ConsoleKey key, ConsoleModifiers modifiers = default)
         }
 
     }
-
 
     //=======================================
     // Game credits
