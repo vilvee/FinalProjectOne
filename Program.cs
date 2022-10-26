@@ -1,10 +1,8 @@
 using System;
-using System.Drawing;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Windows;
-using System.Timers;
 
 internal class Program
 {
@@ -208,28 +206,12 @@ internal class Program
         return talking;
     }
 
-static void GameCountdown()
-{
-       TimeSpan interval = new TimeSpan();
-     Console.WriteLine(interval.ToString());    
-}
-
-
     //=======================================
     // Adventure levels
     //=======================================
     static void Level()
     {
         int bonusHit = 0;
-
-        //Dice sprite and the coresponding Index
-        (string sprite,int indexSprite) levelOne = new Program().DiceSprite();
-        string diceSprite= levelOne.sprite;
-        int spriteIndex = levelOne.indexSprite;
-
-        //Random dice coordinates
-        int diceWitdth = CoordinatesWidth();
-        int diceHeight = CoordinatesHeight();
 
         //range to initiate BossFight
         const int MIN_WIDTH = 2;
@@ -244,9 +226,16 @@ Villain's Health: {aiScore}");
         Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain\nPress Q to quit");
         Pause(1000);
 
-        GameCountdown();
-        
+        for (int i = 0; i < 5; i++)
+        {
+        //Dice sprite and the coresponding Index
+        (string sprite,int indexSprite) levelOne = new Program().DiceSprite();
+        string diceSprite= levelOne.sprite;
+        int spriteIndex = levelOne.indexSprite;
 
+        //Random dice coordinates
+        int diceWitdth = CoordinatesWidth();
+        int diceHeight = CoordinatesHeight();
         bool coord; 
         
         //dice will generate at this position
@@ -270,6 +259,7 @@ Villain's Health: {aiScore}");
         Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
         bonusHit += levelOne.indexSprite;
         aiScore -= bonusHit;
+        }
         Console.WriteLine($"You got a total Bonus of {bonusHit}.");
         Pause(1000);
         
