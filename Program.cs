@@ -15,6 +15,8 @@ internal class Program
     static int roundCounter = 0;
     static int myScore = 300;
     static int aiScore = 500;
+    static int myTotal = 0;
+    static int aiTotal = 0;
     static int row = Console.WindowHeight / 2;
     static int col = Console.WindowWidth / 2;
     static Timer timer;
@@ -66,7 +68,7 @@ internal class Program
                     break;
                 case 2:
                     Clear();
-                    BossFight();
+                    IdlePlay();
                     break;
                 case 3:
                     Clear();
@@ -166,12 +168,10 @@ internal class Program
     static void Level()
     {
         
-
         //range to initiate BossFight
         const int MIN_WIDTH = 2;
         const int MAX_WIDTH = 6;
-        Console.WriteLine($@"Your Health :     {myScore}
-Villain's Health: {aiScore}");
+        HealthDisplay();
 
         //Villain talks
         Console.WriteLine("\nVillain: " + Prompt());
@@ -182,6 +182,7 @@ Villain's Health: {aiScore}");
 
         //Start timer
         Countdown();
+
         elapsed = false; 
 
         while (!elapsed)
@@ -211,12 +212,17 @@ Villain's Health: {aiScore}");
                     //Coordinates of the dice
                     coord = row == diceHeight && col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH;
 
+                    //exit as soon as timer elapses
+                    if(elapsed)
+                    {
+                        break;
+                    }
+
                 } while (!coord);
 
                 Clear();
 
                 //Bonus hit
-                Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
                 bonusHit += levelOne.indexSprite;
                 aiScore -= bonusHit;
                 EndGame();
@@ -234,106 +240,85 @@ Villain's Health: {aiScore}");
     //=======================================
     static void BossFight()
     {
-        int myTotal;
-        int aiTotal;
         int count;
-
-        //=====================================
-        //5 turns to play. Two dice are rolled.
-        //The total is substracted from HP.
-        //Once one reaches 0 game over
-        //====================================
+    // ==================================
+    // 5 turns to play. Two dice are rolled.
+    // The total is substracted from HP.
+    // Once one reaches 0 game over
+    // ====================================
 
         Console.WriteLine(@$"
     You have 5 turns to attack the Villainl
     Press Enter to Roll");
             
-            //wait for Enter input
-            WaitForKey(ConsoleKey.Enter);
-            for (count = 4; count >= 0; count--)
-            {
+        //wait for Enter input
+         WaitForKey(ConsoleKey.Enter);
 
-                if (myScore <= 0 || aiScore <= 0) EndGame();
+        for (count = 5; count > 0; count--)
+        {
+            
+            //Calculate score and check for end game condition
+            EndGame();
+            Clear();
+            HealthDisplay();
 
-                int myRollOne = DiceRoll();
-                int myRollTwo = DiceRoll();
-                int aiRollOne = DiceRoll();
-                int aiRollTwo = DiceRoll();
+            //Count of dice rolls left
+            Console.WriteLine($"\nYou have {count} rolls left");
+            Pause(1000);
 
-                Clear();
-                Console.WriteLine($"You have {count} rolls left");
-                Pause(1000);
-                myTotal = myRollOne + myRollTwo;
-                aiTotal = aiRollOne + aiRollTwo;
-                Console.WriteLine(@$"
+            //roll the dice
+            int myRollOne = DiceRoll();
+            int myRollTwo = DiceRoll();
+            int aiRollOne = DiceRoll();
+            int aiRollTwo = DiceRoll();
+
+            //Calculate totals
+            myTotal = myRollOne + myRollTwo;
+            aiTotal = aiRollOne + aiRollTwo;
+
+            Console.WriteLine(@$"
         You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
            
         The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
 
-                if (myTotal > aiTotal)
-                {
-                    
-                    Pause(1000);
-                    myScore -= aiTotal;
-                    aiScore -= myTotal;
-                    Console.WriteLine(@$"
-        You landed a good hit!
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-                EndGame();
-                }
-                else if (myTotal < aiTotal)
-                {
-                    Pause(1000);
-                    aiScore -= aiTotal;
-                    myScore -= myTotal;
-                    Console.WriteLine(@$"
-        You were clumsy!
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-                EndGame();
-                }
-                else
-                {
-                    Pause(1000);
-                    aiScore += aiTotal;
-                    myScore += myTotal;
-                    Console.WriteLine(@$"
-        You both rolled the same numbers.
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-                EndGame();
-                }
-                WaitForKey(ConsoleKey.Enter);
-
-            }
-            Clear();
-            if (myScore > aiScore)
+            //Display a message based on who landed better score
+            if (myTotal > aiTotal)
             {
-                Console.WriteLine(@$"
-    You had a good fight!
+                Pause(1000);
+                Console.WriteLine("\nYou landed a good hit!\nPress Enter to contiue");
+            }
 
-    Your final health is {myScore}
-    The Villain's is {aiScore}");
-                Pause(4000);
+            else if (myTotal < aiTotal)
+            {
+                Pause(1000);
+                Console.WriteLine("\nYou were clumsy!\nPress Enter to contiue");
             }
             else
             {
-                Console.WriteLine(@$"
-    You call this a fight?!!
-
-    Your final health is {myScore}
-    The Villain's is {aiScore}");
-                Pause(4000);
+                Pause(1000);
+                Console.WriteLine("\nYou both rolled the same numbers.\nPress Enter to contiue");
             }
-        
-        Clear();
+            WaitForKey(ConsoleKey.Enter);
+        }
+
+            Clear();
+
+            HealthDisplay();
+
+            //Final message based on who had a better game
+            if (myScore > aiScore)
+            {
+                Pause(1000);
+                Console.WriteLine("\nYou had a good fight!\nPress Enter");
+                WaitForKey(ConsoleKey.Enter);
+            }
+            else
+            {
+                Pause(1000);
+                Console.WriteLine("You call this a fight?!!\nPress Enter");
+                WaitForKey(ConsoleKey.Enter);
+            }
+            Clear();
     }
     
     //=======================================
@@ -343,6 +328,8 @@ Villain's Health: {aiScore}");
     {
         if (myScore <= 0 || aiScore <= 0)
         {
+            Clear();
+            HealthDisplay();
             if (myScore < aiScore)
             {
                 Console.WriteLine($"\nYOU DIED\n Better luck next time.\n You played {roundCounter} rounds.");
@@ -359,8 +346,36 @@ Villain's Health: {aiScore}");
 
     }
 
-   
-   
+    //=======================================
+    // Handles scores in BossFight
+    //=======================================
+    static void ScoreHandler()
+    {
+        aiScore -= aiTotal;
+        myScore -= myTotal;
+
+        //to not display negative score
+        if (aiScore < 0)
+        {
+            aiScore = 0;
+        }
+        else if (myScore < 0)     
+        {   
+            myScore = 0;
+        } 
+    }
+    
+    //=======================================
+    // Displays Health
+    //=======================================
+    static void HealthDisplay()
+    {
+        //to not display negative score
+        ScoreHandler();
+
+        Console.WriteLine($@"Your Health :     {myScore}
+Villain's Health: {aiScore}");
+    }
     //===========================
     // Roll a random dice
     //===========================
@@ -425,10 +440,14 @@ Villain's Health: {aiScore}");
     {
         //the timer will run x millisocnds
         const int SECOND_IN_MILISECOND = 15000;
-        Console.WriteLine($"Rush to get as many dice as you can in {SECOND_IN_MILISECOND} seconds for a Bonus Hit!");
-
+        const int MILLISECONDS_IN_SECOND = 1000;
+        Console.WriteLine($"\nRush to get as many dice as you can in {SECOND_IN_MILISECOND / MILLISECONDS_IN_SECOND} seconds for a Bonus Hit!\nPress Enter");
+        
         timer = new Timer(SECOND_IN_MILISECOND);
         timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+
+        WaitForKey(ConsoleKey.Enter);
+        Clear();
         timer.Start();
     }
 
@@ -534,6 +553,89 @@ Villain's Health: {aiScore}");
     }
 }
 
+    //=======================================
+    // Fight for Idle Play
+    //=======================================
+    static void IdlePlay()
+    {
+        //set the health for idle mode
+        aiScore = 100;
+        myScore = 100;
+    // ==================================
+    // 5 turns to play. Two dice are rolled.
+    // The total is substracted from HP.
+    // Once one reaches 0 game over
+    // ====================================
+
+        Console.WriteLine("\nRoll to attack the Villainl.\nPress Enter to Roll");
+            
+        //wait for Enter input
+         WaitForKey(ConsoleKey.Enter);
+
+        while (aiScore > 0 || myScore > 0)
+        {
+            
+            //check for end game condition and display health
+            EndGame();
+            Clear();
+            HealthDisplay();
+            Pause(1000);
+
+            int myRollOne = DiceRoll();
+            int myRollTwo = DiceRoll();
+            int aiRollOne = DiceRoll();
+            int aiRollTwo = DiceRoll();
+
+            //Calculate totals
+            myTotal = myRollOne + myRollTwo;
+            aiTotal = aiRollOne + aiRollTwo;
+
+            Console.WriteLine(@$"
+        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
+           
+        The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
+
+            //Display a message based on who landed better score
+            if (myTotal > aiTotal)
+            {
+                Pause(1000);
+                Console.WriteLine("\nYou landed a good hit!\nPress Enter to contiue");
+            }
+
+            else if (myTotal < aiTotal)
+            {
+                Pause(1000);
+                Console.WriteLine("\nYou were clumsy!\nPress Enter to contiue");
+            }
+            else
+            {
+                Pause(1000);
+                Console.WriteLine("\nYou both rolled the same numbers.\nPress Enter to contiue");
+            }
+            WaitForKey(ConsoleKey.Enter);
+        }
+
+            Clear();
+
+            HealthDisplay();
+
+            //Final message based on who had a better game
+            if (myScore > aiScore)
+            {
+                Pause(1000);
+                Console.WriteLine("\nYou had a good fight!\nPress Enter");
+                WaitForKey(ConsoleKey.Enter);
+            }
+            else
+            {
+                Pause(1000);
+                Console.WriteLine("You call this a fight?!!\nPress Enter");
+                WaitForKey(ConsoleKey.Enter);
+            }
+            End();
+            Main();
+    }
+    
     //=======================================
     // Game credits
     //=======================================
