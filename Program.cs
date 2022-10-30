@@ -66,7 +66,7 @@ internal class Program
                     break;
                 case 2:
                     Clear();
-                   //TODO
+                    BossFight();
                     break;
                 case 3:
                     Clear();
@@ -141,17 +141,6 @@ internal class Program
     }
 
     //===========================
-    // Roll a random dice
-    //===========================
-    static int DiceRoll()
-    {
-        //new random dice
-        Random dice = new();
-        int roll = dice.Next(1, 11);
-        return roll;
-    }
-
-    //===========================
     // Flow of the adventure game
     //===========================
     static void Adventure()
@@ -161,6 +150,7 @@ internal class Program
         while (aiScore >= 0 || myScore >= 0)
         {
             Level();
+            EndGame();
             BossFight();
             roundCounter++;
         } 
@@ -169,53 +159,7 @@ internal class Program
         End();
         
     }
-
-    //=======================================
-    // Coordinates for the dice sprite height
-    //=======================================
-    static int CoordinatesWidth()
-    {
-        int[] numbers = Enumerable.Range(10, 100).ToArray();
-        Random coordinates = new();
-        int index = coordinates.Next(0, numbers.Length);
-        int rdNumber = numbers[index];
-        return rdNumber;
-    }
-
-    //=======================================
-    // Coordinates for the dice sprite width
-    //=======================================
-    static int CoordinatesHeight()
-    {
-        int[] numbers = Enumerable.Range(5, 20).ToArray();
-        Random coordinates = new();
-        int index = coordinates.Next(0, numbers.Length);
-        int rdNumber = numbers[index];
-        return rdNumber;
-    }
-
-    //=======================================
-    // Villain dialogue
-    //=======================================
-    static string Prompt()
-    {
-        //REF for the speech:https://www.scoopwhoop.com/entertainment/times-villains-made-sense-and-convinced-us-they-were-right/
-        string[] talk = {"You (humans) move to an area and you multiply and multiply until " +
-                "every natural resource is consumed and the only way you can survive is to spread to another area...",
-                " You had a bad day once, am I right?… You had a bad day and everything changed. Why else would you...",
-                "And in a supreme act of selfishness shattered history like a rank amateur, " +
-                "turned the world into a living hell moments away from destruction and ‘I AM’ the villain?",
-                "You have been supplied with a false idol to stop you tearing down this CORRUPT CITY! " +
-                "Let me tell you the truth... ",
-                "This universe is finite, its resources, finite, if life is left unchecked, life will cease to exist. " +
-                "It needs correction… I’m the only one who knows that. At least I’m the only one with the will to act on it!",
-                "I said, these human beings were flawed and murderous. And for that..."};
-        Random speech = new();
-        int index = speech.Next(0, talk.Length);
-        string talking = talk[index];
-        return talking;
-    }
-
+    
     //=======================================
     // Adventure levels
     //=======================================
@@ -275,6 +219,7 @@ Villain's Health: {aiScore}");
                 Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
                 bonusHit += levelOne.indexSprite;
                 aiScore -= bonusHit;
+                EndGame();
             }
         }
         Console.WriteLine($"You got a total Bonus of {bonusHit}.");
@@ -282,6 +227,195 @@ Villain's Health: {aiScore}");
         
         Pause(4000);
         Clear();
+    }
+
+    //=======================================
+    // Fight for adventure mode
+    //=======================================
+    static void BossFight()
+    {
+        int myTotal;
+        int aiTotal;
+        int count;
+
+        //=====================================
+        //5 turns to play. Two dice are rolled.
+        //The total is substracted from HP.
+        //Once one reaches 0 game over
+        //====================================
+
+        Console.WriteLine(@$"
+    You have 5 turns to attack the Villainl
+    Press Enter to Roll");
+            
+            //wait for Enter input
+            WaitForKey(ConsoleKey.Enter);
+            for (count = 4; count >= 0; count--)
+            {
+
+                if (myScore <= 0 || aiScore <= 0) EndGame();
+
+                int myRollOne = DiceRoll();
+                int myRollTwo = DiceRoll();
+                int aiRollOne = DiceRoll();
+                int aiRollTwo = DiceRoll();
+
+                Clear();
+                Console.WriteLine($"You have {count} rolls left");
+                Pause(1000);
+                myTotal = myRollOne + myRollTwo;
+                aiTotal = aiRollOne + aiRollTwo;
+                Console.WriteLine(@$"
+        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
+           
+        The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
+
+                if (myTotal > aiTotal)
+                {
+                    
+                    Pause(1000);
+                    myScore -= aiTotal;
+                    aiScore -= myTotal;
+                    Console.WriteLine(@$"
+        You landed a good hit!
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+                EndGame();
+                }
+                else if (myTotal < aiTotal)
+                {
+                    Pause(1000);
+                    aiScore -= aiTotal;
+                    myScore -= myTotal;
+                    Console.WriteLine(@$"
+        You were clumsy!
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+                EndGame();
+                }
+                else
+                {
+                    Pause(1000);
+                    aiScore += aiTotal;
+                    myScore += myTotal;
+                    Console.WriteLine(@$"
+        You both rolled the same numbers.
+
+        Your health is {myScore} and The Villain's health is {aiScore}
+            
+        Press Enter to contiue");
+                EndGame();
+                }
+                WaitForKey(ConsoleKey.Enter);
+
+            }
+            Clear();
+            if (myScore > aiScore)
+            {
+                Console.WriteLine(@$"
+    You had a good fight!
+
+    Your final health is {myScore}
+    The Villain's is {aiScore}");
+                Pause(4000);
+            }
+            else
+            {
+                Console.WriteLine(@$"
+    You call this a fight?!!
+
+    Your final health is {myScore}
+    The Villain's is {aiScore}");
+                Pause(4000);
+            }
+        
+        Clear();
+    }
+    
+    //=======================================
+    // End game conditions
+    //=======================================
+    static void EndGame()
+    {
+        if (myScore <= 0 || aiScore <= 0)
+        {
+            if (myScore < aiScore)
+            {
+                Console.WriteLine($"\nYOU DIED\n Better luck next time.\n You played {roundCounter} rounds.");
+                End();
+                Main();
+            }
+            else if (myScore > aiScore)
+            {
+                Console.WriteLine($"\nYou fought a valliant battle\nYOU WIN!\nYou won in {roundCounter} rounds.");
+                End();
+                Main();
+            }
+        }
+
+    }
+
+   
+   
+    //===========================
+    // Roll a random dice
+    //===========================
+    static int DiceRoll()
+    {
+        //new random dice
+        Random dice = new();
+        int roll = dice.Next(1, 11);
+        return roll;
+    }
+
+    //=======================================
+    // Coordinates for the dice sprite height
+    //=======================================
+    static int CoordinatesWidth()
+    {
+        int[] numbers = Enumerable.Range(10, 100).ToArray();
+        Random coordinates = new();
+        int index = coordinates.Next(0, numbers.Length);
+        int rdNumber = numbers[index];
+        return rdNumber;
+    }
+
+    //=======================================
+    // Coordinates for the dice sprite width
+    //=======================================
+    static int CoordinatesHeight()
+    {
+        int[] numbers = Enumerable.Range(5, 20).ToArray();
+        Random coordinates = new();
+        int index = coordinates.Next(0, numbers.Length);
+        int rdNumber = numbers[index];
+        return rdNumber;
+    }
+
+    //=======================================
+    // Villain dialogue
+    //=======================================
+    static string Prompt()
+    {
+        //REF for the speech:https://www.scoopwhoop.com/entertainment/times-villains-made-sense-and-convinced-us-they-were-right/
+        string[] talk = {"You (humans) move to an area and you multiply and multiply until " +
+                "every natural resource is consumed and the only way you can survive is to spread to another area...",
+                " You had a bad day once, am I right?… You had a bad day and everything changed. Why else would you...",
+                "And in a supreme act of selfishness shattered history like a rank amateur, " +
+                "turned the world into a living hell moments away from destruction and ‘I AM’ the villain?",
+                "You have been supplied with a false idol to stop you tearing down this CORRUPT CITY! " +
+                "Let me tell you the truth... ",
+                "This universe is finite, its resources, finite, if life is left unchecked, life will cease to exist. " +
+                "It needs correction… I’m the only one who knows that. At least I’m the only one with the will to act on it!",
+                "I said, these human beings were flawed and murderous. And for that..."};
+        Random speech = new();
+        int index = speech.Next(0, talk.Length);
+        string talking = talk[index];
+        return talking;
     }
 
     //=======================================
@@ -386,111 +520,6 @@ Villain's Health: {aiScore}");
         return sprites;
     }
 
-    //=======================================
-    // Fight for adventure mode
-    //=======================================
-    static void BossFight()
-    {
-
-
-        int myTotal;
-        int aiTotal;
-        int count;
-
-        //=====================================
-        //5 turns to play. Two dice are rolled.
-        //The total is substracted from HP.
-        //Once one reaches 0 game over
-        //====================================
-
-        Console.WriteLine(@$"
-    You have 5 turns to attack the Villainl
-    Press Enter to Roll");
-            
-            //wait for Enter input
-            WaitForKey(ConsoleKey.Enter);
-            for (count = 4; count >= 0; count--)
-            {
-
-                if (myScore <= 0 || aiScore <= 0) EndGame();
-
-                int myRollOne = DiceRoll();
-                int myRollTwo = DiceRoll();
-                int aiRollOne = DiceRoll();
-                int aiRollTwo = DiceRoll();
-
-                Clear();
-                Console.WriteLine($"You have {count} rolls left");
-                Pause(1000);
-                myTotal = myRollOne + myRollTwo;
-                aiTotal = aiRollOne + aiRollTwo;
-                Console.WriteLine(@$"
-        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
-           
-        The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
-
-                if (myTotal > aiTotal)
-                {
-                    Pause(1000);
-                    myScore -= aiTotal;
-                    aiScore -= myTotal;
-                    Console.WriteLine(@$"
-        You landed a good hit!
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-                }
-                else if (myTotal < aiTotal)
-                {
-                    Pause(1000);
-                    aiScore -= aiTotal;
-                    myScore -= myTotal;
-                    Console.WriteLine(@$"
-        You were clumsy!
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-                }
-                else
-                {
-                    Pause(1000);
-                    aiScore += aiTotal;
-                    myScore += myTotal;
-                    Console.WriteLine(@$"
-        You both rolled the same numbers.
-
-        Your health is {myScore} and The Villain's health is {aiScore}
-            
-        Press Enter to contiue");
-                }
-                WaitForKey(ConsoleKey.Enter);
-
-            }
-            Clear();
-            if (myScore > aiScore)
-            {
-                Console.WriteLine(@$"
-    You had a good fight!
-
-    Your final health is {myScore}
-    The Villain's is {aiScore}");
-                Pause(4000);
-            }
-            else
-            {
-                Console.WriteLine(@$"
-    You call this a fight?!!
-
-    Your final health is {myScore}
-    The Villain's is {aiScore}");
-                Pause(4000);
-            }
-        
-        Clear();
-    }
-
     //==================================
     //Wait for key input
     //https://stackoverflow.com/questions/71315422/make-user-press-specific-key-to-progress-in-program
@@ -504,25 +533,6 @@ Villain's Health: {aiScore}");
             return;
     }
 }
-
-    //=======================================
-    // End game conditions
-    //=======================================
-    static void EndGame()
-    {
-        if ( myScore < aiScore)
-        {
-            Console.WriteLine($"\nYOU DIED\n Better luck next time.\n You played {roundCounter} rounds.");
-            End();
-            Main();
-        }
-        else if ( myScore > aiScore)
-        {
-            Console.WriteLine($"\nYou fought a valliant battle\nYOU WIN!\nYou won in {roundCounter} rounds.");
-            End();
-        }
-
-    }
 
     //=======================================
     // Game credits
