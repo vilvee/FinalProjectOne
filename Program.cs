@@ -3,17 +3,23 @@ using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Windows;
+using System.Timers;
+using System.Threading;
+using Timer = System.Timers.Timer;
 
 internal class Program
 {
     //===========================
     // Global Variables Section
     //===========================
+    static int roundCounter = 0;
     static int myScore = 300;
     static int aiScore = 500;
     static int row = Console.WindowHeight / 2;
     static int col = Console.WindowWidth / 2;
-
+    static Timer timer;
+    static bool elapsed = false;
+    static int bonusHit = 0;
 
     //==========================================
     // Title of the console application and flow
@@ -60,7 +66,7 @@ internal class Program
                     break;
                 case 2:
                     Clear();
-                    BossFight();
+                   //TODO
                     break;
                 case 3:
                     Clear();
@@ -151,13 +157,17 @@ internal class Program
     static void Adventure()
     {
         //level progression
-        for (int i = 0; i < 5; i++)
+        //Continue game until one score reaches 0
+        while (aiScore >= 0 || myScore >= 0)
         {
             Level();
             BossFight();
-        }
+            roundCounter++;
+        } 
+        
         EndGame();
         End();
+        
     }
 
     //=======================================
@@ -211,7 +221,7 @@ internal class Program
     //=======================================
     static void Level()
     {
-        int bonusHit = 0;
+        
 
         //range to initiate BossFight
         const int MIN_WIDTH = 2;
@@ -226,39 +236,46 @@ Villain's Health: {aiScore}");
         Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain\nPress Q to quit");
         Pause(1000);
 
-        for (int i = 0; i < 5; i++)
+        //Start timer
+        Countdown();
+        elapsed = false; 
+
+        while (!elapsed)
         {
-            //Dice sprite and the coresponding Index
-            (string sprite, int indexSprite) levelOne = new Program().DiceSprite();
-            string diceSprite = levelOne.sprite;
-            int spriteIndex = levelOne.indexSprite;
-
-            //Random dice coordinates
-            int diceWitdth = CoordinatesWidth();
-            int diceHeight = CoordinatesHeight();
-            bool coord;
-
-            //dice will generate at this position
-            Console.SetCursorPosition(diceWitdth, diceHeight);
-            Console.Write(levelOne.sprite);
-
-            //start game at this position
-            Console.SetCursorPosition(col, row);
-
-            do
             {
-                Keys();
+                //Dice sprite and the coresponding Index
+                (string sprite, int indexSprite) levelOne = new Program().DiceSprite();
+                string diceSprite = levelOne.sprite;
+                int spriteIndex = levelOne.indexSprite;
 
-                coord = row == diceHeight && col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH;
+                //Random dice coordinates
+                int diceWitdth = CoordinatesWidth();
+                int diceHeight = CoordinatesHeight();
+                bool coord;
 
-            } while (!coord);
+                //dice will generate at this position
+                Console.SetCursorPosition(diceWitdth, diceHeight);
+                Console.Write(levelOne.sprite);
 
-            Clear();
+                //start game at this position
+                Console.SetCursorPosition(col, row);
 
-            //Bonus hit
-            Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
-            bonusHit += levelOne.indexSprite;
-            aiScore -= bonusHit;
+                do
+                {
+                    Keys();
+
+                    //Coordinates of the dice
+                    coord = row == diceHeight && col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH;
+
+                } while (!coord);
+
+                Clear();
+
+                //Bonus hit
+                Console.WriteLine($"You get a Bonus Hit of {levelOne.indexSprite}.");
+                bonusHit += levelOne.indexSprite;
+                aiScore -= bonusHit;
+            }
         }
         Console.WriteLine($"You got a total Bonus of {bonusHit}.");
         Pause(1000);
@@ -267,6 +284,31 @@ Villain's Health: {aiScore}");
         Clear();
     }
 
+    //=======================================
+    // START TIMER
+    //=======================================
+    static void Countdown()
+    {
+        //the timer will run x millisocnds
+        const int SECOND_IN_MILISECOND = 15000;
+        Console.WriteLine($"Rush to get as many dice as you can in {SECOND_IN_MILISECOND} seconds for a Bonus Hit!");
+
+        timer = new Timer(SECOND_IN_MILISECOND);
+        timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+        timer.Start();
+    }
+
+    //=======================================
+    // END TIMER
+    //=======================================
+ static void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            // End condition 
+            elapsed = true;
+            timer.Stop();
+
+        }
+     
     //=======================================
     // Navigation keys
     //=======================================
@@ -349,6 +391,7 @@ Villain's Health: {aiScore}");
     //=======================================
     static void BossFight()
     {
+
 
         int myTotal;
         int aiTotal;
@@ -467,15 +510,15 @@ Villain's Health: {aiScore}");
     //=======================================
     static void EndGame()
     {
-        if (myScore <= 0 || myScore < aiScore)
+        if ( myScore < aiScore)
         {
-            Console.WriteLine("\nYOU DIED");
+            Console.WriteLine($"\nYOU DIED\n Better luck next time.\n You played {roundCounter} rounds.");
             End();
             Main();
         }
-        else if (aiScore <= 0 || myScore > aiScore)
+        else if ( myScore > aiScore)
         {
-            Console.WriteLine("\nYOU WIN");
+            Console.WriteLine($"\nYou fought a valliant battle\nYOU WIN!\nYou won in {roundCounter} rounds.");
             End();
         }
 
@@ -511,5 +554,6 @@ Villain's Health: {aiScore}");
         Clear();
     }
 }
+
 
 
