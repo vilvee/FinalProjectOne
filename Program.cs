@@ -14,7 +14,7 @@ internal class Program
     //===========================
     static int roundCounter = 0;
     static int myScore = 300;
-    static int aiScore = 500;
+    static int aiScore = 50;
     static int myTotal = 0;
     static int aiTotal = 0;
     static int row = Console.WindowHeight / 2;
@@ -224,12 +224,15 @@ internal class Program
 
                 //Bonus hit
                 bonusHit += levelOne.indexSprite;
-                aiScore -= bonusHit;
-                EndGame();
+                Console.WriteLine(bonusHit);
+                Pause(1000);
             }
         }
+ 
         Console.WriteLine($"You got a total Bonus of {bonusHit}.");
         Pause(1000);
+        aiScore -= bonusHit;
+        EndGame();
         
         Pause(4000);
         Clear();
@@ -257,8 +260,7 @@ internal class Program
         for (count = 5; count > 0; count--)
         {
             
-            //Calculate score and check for end game condition
-            EndGame();
+            //Calculate score
             Clear();
             HealthDisplay();
 
@@ -298,7 +300,10 @@ internal class Program
                 Pause(1000);
                 Console.WriteLine("\nYou both rolled the same numbers.\nPress Enter to contiue");
             }
+
+            //wait for Enter and check for end game condition
             WaitForKey(ConsoleKey.Enter);
+            EndGame();
         }
 
             Clear();
