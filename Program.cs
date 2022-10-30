@@ -17,8 +17,8 @@ internal class Program
     static int aiScore = 50;
     static int myTotal = 0;
     static int aiTotal = 0;
-    static int row = Console.WindowHeight / 2;
-    static int col = Console.WindowWidth / 2;
+    static int cursorRow = Console.WindowHeight / 2;
+    static int cursorlCol = Console.WindowWidth / 2;
     static Timer timer;
     static bool elapsed = false;
     static int bonusHit = 0;
@@ -28,18 +28,9 @@ internal class Program
     //==========================================
     private static void Main()
     {
-
         Console.Title = "DICE ADVENTURERS";
         Intro();
         StartMenu();
-    }
-
-    //===========================
-    // Clear screeen
-    //===========================
-    static void Clear()
-    {
-        Console.Clear();
     }
 
     //===========================
@@ -63,15 +54,12 @@ internal class Program
             switch (choice)
             {
                 case 1:
-                    Clear();
                     IntroAdventure();
                     break;
                 case 2:
-                    Clear();
                     IdlePlay();
                     break;
                 case 3:
-                    Clear();
                     Credits();
                     break;
                 case 4:
@@ -94,22 +82,23 @@ internal class Program
     {
         //splash screen
         const int MINUS_WIDTH = 10;
-        const int MINUS_HEITH = 8;
+        const int MINUS_HEIGHT = 8;
         const int DIV = 2;
-        // DICE ADVENTURERS would in black on a red background in the middle of the screen
+
+        // DICE ADVENTURERS would be in black on a red background in the middle of the screen
         Console.BackgroundColor = ConsoleColor.Red;
         Console.ForegroundColor = ConsoleColor.Black;
         const string S = "DICE ADVENTURERS";
-        Console.SetCursorPosition( Console.WindowWidth/ DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH);
+        Console.SetCursorPosition( Console.WindowWidth/ DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEIGHT);
         Console.WriteLine(S);
         Pause(2000);
         Console.ResetColor();
-        Clear();
+        Console.Clear();
 
     }
 
     //===========================
-    // Pause for n secs
+    // Pause for n milliseconds
     //===========================
     static void Pause(int time)
     {
@@ -128,7 +117,7 @@ internal class Program
             Console.Write($"\rThe Game will quit in {i} ");
             Pause(1000);
         }
-        Clear();
+        Console.Clear();
     }
 
     //===========================
@@ -136,9 +125,9 @@ internal class Program
     //===========================
     static void IntroAdventure()
     {
+        Console.Clear();
         Console.WriteLine("\nDuring one villain's long long long long long long long and tedious battle monologue...");
         Pause(4000);
-        Clear();
         Adventure();
     }
 
@@ -147,6 +136,7 @@ internal class Program
     //===========================
     static void Adventure()
     {
+        Console.Clear();
         //level progression
         //Continue game until one score reaches 0
         while (aiScore >= 0 || myScore >= 0)
@@ -167,10 +157,6 @@ internal class Program
     //=======================================
     static void Level()
     {
-        
-        //range to initiate BossFight
-        const int MIN_WIDTH = 2;
-        const int MAX_WIDTH = 6;
         HealthDisplay();
 
         //Villain talks
@@ -183,13 +169,16 @@ internal class Program
         //Start timer
         Countdown();
 
+        //range to initiate get die
+        const int MIN_WIDTH = 2;
+        const int MAX_WIDTH = 6;
         elapsed = false; 
 
         while (!elapsed)
         {
             {
                 //Dice sprite and the coresponding Index
-                (string sprite, int indexSprite) levelOne = new Program().DiceSprite();
+                (string sprite, int indexSprite) levelOne = DiceSprite();
                 string diceSprite = levelOne.sprite;
                 int spriteIndex = levelOne.indexSprite;
 
@@ -203,14 +192,14 @@ internal class Program
                 Console.Write(levelOne.sprite);
 
                 //start game at this position
-                Console.SetCursorPosition(col, row);
+                Console.SetCursorPosition(cursorlCol, cursorRow);
 
                 do
                 {
                     Keys();
 
-                    //Coordinates of the dice
-                    coord = row == diceHeight && col <= diceWitdth + MAX_WIDTH && col >= diceWitdth - MIN_WIDTH;
+                    //Cursor on dice check
+                    coord = cursorRow == diceHeight && cursorlCol <= diceWitdth + MAX_WIDTH && cursorlCol >= diceWitdth - MIN_WIDTH;
 
                     //exit as soon as timer elapses
                     if(elapsed)
@@ -220,11 +209,10 @@ internal class Program
 
                 } while (!coord);
 
-                Clear();
+                Console.Clear();
 
                 //Bonus hit
                 bonusHit += levelOne.indexSprite;
-                Console.WriteLine(bonusHit);
                 Pause(1000);
             }
         }
@@ -235,7 +223,7 @@ internal class Program
         EndGame();
         
         Pause(4000);
-        Clear();
+        Console.Clear();
     }
 
     //=======================================
@@ -243,7 +231,7 @@ internal class Program
     //=======================================
     static void BossFight()
     {
-        int count;
+        int turns;
     // ==================================
     // 5 turns to play. Two dice are rolled.
     // The total is substracted from HP.
@@ -257,15 +245,15 @@ internal class Program
         //wait for Enter input
          WaitForKey(ConsoleKey.Enter);
 
-        for (count = 5; count > 0; count--)
+        for (turns = 5; turns > 0; turns--)
         {
             
             //Calculate score
-            Clear();
+            Console.Clear();
             HealthDisplay();
 
             //Count of dice rolls left
-            Console.WriteLine($"\nYou have {count} rolls left");
+            Console.WriteLine($"\nYou have {turns} rolls left");
             Pause(1000);
 
             //roll the dice
@@ -287,26 +275,27 @@ internal class Program
             if (myTotal > aiTotal)
             {
                 Pause(1000);
-                Console.WriteLine("\nYou landed a good hit!\nPress Enter to contiue");
+                Console.WriteLine("\nYou landed a good hit!");
             }
 
             else if (myTotal < aiTotal)
             {
                 Pause(1000);
-                Console.WriteLine("\nYou were clumsy!\nPress Enter to contiue");
+                Console.WriteLine("\nYou were clumsy!");
             }
             else
             {
                 Pause(1000);
-                Console.WriteLine("\nYou both rolled the same numbers.\nPress Enter to contiue");
+                Console.WriteLine("\nYou both rolled the same numbers.");
             }
 
             //wait for Enter and check for end game condition
+            Console.WriteLine("\nPress Enter to continue");
             WaitForKey(ConsoleKey.Enter);
             EndGame();
         }
 
-            Clear();
+            Console.Clear();
 
             HealthDisplay();
 
@@ -323,7 +312,7 @@ internal class Program
                 Console.WriteLine("You call this a fight?!!\nPress Enter");
                 WaitForKey(ConsoleKey.Enter);
             }
-            Clear();
+            Console.Clear();
     }
     
     //=======================================
@@ -333,7 +322,7 @@ internal class Program
     {
         if (myScore <= 0 || aiScore <= 0)
         {
-            Clear();
+            Console.Clear();
             HealthDisplay();
             if (myScore < aiScore)
             {
@@ -364,7 +353,7 @@ internal class Program
         {
             aiScore = 0;
         }
-        else if (myScore < 0)     
+        if (myScore < 0)
         {   
             myScore = 0;
         } 
@@ -378,8 +367,8 @@ internal class Program
         //to not display negative score
         ScoreHandler();
 
-        Console.WriteLine($@"Your Health :     {myScore}
-Villain's Health: {aiScore}");
+        Console.WriteLine($"Your Health :     {myScore}\nVillain's Health: {aiScore}");
+
     }
     //===========================
     // Roll a random dice
@@ -397,6 +386,7 @@ Villain's Health: {aiScore}");
     //=======================================
     static int CoordinatesWidth()
     {
+ 
         int[] numbers = Enumerable.Range(10, 100).ToArray();
         Random coordinates = new();
         int index = coordinates.Next(0, numbers.Length);
@@ -408,7 +398,7 @@ Villain's Health: {aiScore}");
     // Coordinates for the dice sprite width
     //=======================================
     static int CoordinatesHeight()
-    {
+    { 
         int[] numbers = Enumerable.Range(5, 20).ToArray();
         Random coordinates = new();
         int index = coordinates.Next(0, numbers.Length);
@@ -452,7 +442,7 @@ Villain's Health: {aiScore}");
         timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
 
         WaitForKey(ConsoleKey.Enter);
-        Clear();
+        Console.Clear();
         timer.Start();
     }
 
@@ -482,16 +472,16 @@ Villain's Health: {aiScore}");
             switch (key.Key)
             {
                 case ConsoleKey.UpArrow:
-                    row--;
+                    cursorRow--;
                     break;
                 case ConsoleKey.DownArrow:
-                    row++;
+                    cursorRow++;
                     break;
                 case ConsoleKey.RightArrow:
-                    col++;
+                    cursorlCol++;
                     break;
                 case ConsoleKey.LeftArrow:
-                    col--;
+                    cursorlCol--;
                     break;
                 case ConsoleKey.Q:
                     End();
@@ -503,31 +493,31 @@ Villain's Health: {aiScore}");
                     break;
             }
             //resetting the cursor if user hits boundary
-            if (row == minHeightWidth)
+            if (cursorRow == minHeightWidth)
             {
-                row = maxHeight;
-                row = maxHeight;
+                cursorRow = maxHeight;
+                cursorRow = maxHeight;
             }
-            else if (col == minHeightWidth)
+            else if (cursorlCol == minHeightWidth)
             {
-                col = maxWidth;
+                cursorlCol = maxWidth;
             }
-            else if (row == maxHeight)
+            else if (cursorRow == maxHeight)
             {
-                row = minHeightWidth;
+                cursorRow = minHeightWidth;
             }
-            else if (col ==maxWidth)
+            else if (cursorlCol ==maxWidth)
             {
-                col = minHeightWidth;
+                cursorlCol = minHeightWidth;
             }
 
-            Console.SetCursorPosition(col, row);
+            Console.SetCursorPosition(cursorlCol, cursorRow);
     }
 
     //=======================================
     // Dice images
     //=======================================
-    public (string, int)  DiceSprite()
+    static public (string, int)  DiceSprite()
     {
         //array display the image of dice
         const int ARRAY_MIN = 0;
@@ -563,6 +553,7 @@ Villain's Health: {aiScore}");
     //=======================================
     static void IdlePlay()
     {
+        Console.Clear();
         //set the health for idle mode
         aiScore = 100;
         myScore = 100;
@@ -582,7 +573,7 @@ Villain's Health: {aiScore}");
             
             //check for end game condition and display health
             EndGame();
-            Clear();
+            Console.Clear();
             HealthDisplay();
             Pause(1000);
 
@@ -620,7 +611,7 @@ Villain's Health: {aiScore}");
             WaitForKey(ConsoleKey.Enter);
         }
 
-            Clear();
+            Console.Clear();
 
             HealthDisplay();
 
@@ -646,6 +637,7 @@ Villain's Health: {aiScore}");
     //=======================================
     static void Credits()
     {
+        Console.Clear();
         const int MINUS_WIDTH = 10;
         const int MINUS_HEITH_TITLE = 8;
         const int MINUS_HEITH_NAME = 6;
@@ -665,10 +657,10 @@ Villain's Health: {aiScore}");
             Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH_NAME);
             Console.WriteLine("Veronika Vilenski");
             Pause(2000);
-            Clear();
+            Console.Clear();
         }
         Console.ResetColor();
-        Clear();
+        Console.Clear();
     }
 }
 
