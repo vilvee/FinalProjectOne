@@ -362,6 +362,7 @@ internal class Program
         Console.WriteLine($"Your Health :     {myScore}\nVillain's Health: {aiScore}");
 
     }
+    
     //===========================
     // Roll a random dice
     //===========================
