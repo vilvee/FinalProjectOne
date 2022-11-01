@@ -18,7 +18,7 @@ internal class Program
     static int myTotal = 0;
     static int aiTotal = 0;
     static int cursorRow = Console.WindowHeight / 2;
-    static int cursorlCol = Console.WindowWidth / 2;
+    static int cursorCol = Console.WindowWidth / 2;
     static Timer timer;
     static bool elapsed = false;
     static int bonusHit = 0;
@@ -28,13 +28,14 @@ internal class Program
     //==========================================
     private static void Main()
     {
+        //Title of the console
         Console.Title = "DICE ADVENTURERS";
         Intro();
         StartMenu();
     }
 
     //===========================
-    // Satart menue selection
+    // Start menu selection
     //===========================
     static int StartMenu()
     {
@@ -80,7 +81,7 @@ internal class Program
     //===========================
     static void Intro()
     {
-        //splash screen
+        //code for splash screen
         const int MINUS_WIDTH = 10;
         const int MINUS_HEIGHT = 8;
         const int DIV = 2;
@@ -89,9 +90,13 @@ internal class Program
         Console.BackgroundColor = ConsoleColor.Red;
         Console.ForegroundColor = ConsoleColor.Black;
         const string S = "DICE ADVENTURERS";
+
+        //position of the title
         Console.SetCursorPosition( Console.WindowWidth/ DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEIGHT);
         Console.WriteLine(S);
         Pause(2000);
+
+        //resetting colors for the next text to come
         Console.ResetColor();
         Console.Clear();
 
@@ -102,6 +107,7 @@ internal class Program
     //===========================
     static void Pause(int time)
     {
+        //pause for the amount of time entered
         Thread.Sleep(time);
     }
 
@@ -111,7 +117,7 @@ internal class Program
     static void End()
     {
 
-        // will display countdown
+        // will display countdown 
         for (int i = 5; i >= 0; i--)
         {
             Console.Write($"\rThe Game will quit in {i} ");
@@ -125,6 +131,7 @@ internal class Program
     //===========================
     static void IntroAdventure()
     {
+        //this text will appear before starting the game
         Console.Clear();
         Console.WriteLine("\nDuring one villain's long long long long long long long and tedious battle monologue...");
         Pause(4000);
@@ -137,8 +144,9 @@ internal class Program
     static void Adventure()
     {
         Console.Clear();
+
         //level progression
-        //Continue game until one score reaches 0
+        //Continue game until one of the scores reaches 0
         while (aiScore >= 0 || myScore >= 0)
         {
             Level();
@@ -177,29 +185,29 @@ internal class Program
         while (!elapsed)
         {
             {
-                //Dice sprite and the coresponding Index
+                //Dice sprite and the corresponding Index
                 (string sprite, int indexSprite) levelOne = DiceSprite();
                 string diceSprite = levelOne.sprite;
                 int spriteIndex = levelOne.indexSprite;
 
                 //Random dice coordinates
-                int diceWitdth = CoordinatesWidth();
+                int diceWidth = CoordinatesWidth();
                 int diceHeight = CoordinatesHeight();
                 bool coord;
 
                 //dice will generate at this position
-                Console.SetCursorPosition(diceWitdth, diceHeight);
+                Console.SetCursorPosition(diceWidth, diceHeight);
                 Console.Write(levelOne.sprite);
 
                 //start game at this position
-                Console.SetCursorPosition(cursorlCol, cursorRow);
+                Console.SetCursorPosition(cursorCol, cursorRow);
 
                 do
                 {
                     Keys();
 
                     //Cursor on dice check
-                    coord = cursorRow == diceHeight && cursorlCol <= diceWitdth + MAX_WIDTH && cursorlCol >= diceWitdth - MIN_WIDTH;
+                    coord = cursorRow == diceHeight && cursorCol <= diceWidth + MAX_WIDTH && cursorCol >= diceWidth - MIN_WIDTH;
 
                     //exit as soon as timer elapses
                     if(elapsed)
@@ -219,6 +227,8 @@ internal class Program
  
         Console.WriteLine($"You got a total Bonus of {bonusHit}.");
         Pause(1000);
+
+        //substract total bonus from aiScore
         aiScore -= bonusHit;
         EndGame();
         
@@ -231,15 +241,17 @@ internal class Program
     //=======================================
     static void BossFight()
     {
-        int turns;
+    
     // ==================================
     // 5 turns to play. Two dice are rolled.
-    // The total is substracted from HP.
+    // The total is subtract from HP.
     // Once one reaches 0 game over
     // ====================================
 
+        int turns;
+
         Console.WriteLine(@$"
-    You have 5 turns to attack the Villainl
+    You have 5 turns to attack the Villain
     Press Enter to Roll");
             
         //wait for Enter input
@@ -332,7 +344,7 @@ internal class Program
             }
             else if (myScore > aiScore)
             {
-                Console.WriteLine($"\nYou fought a valliant battle\nYOU WIN!\nYou won in {roundCounter} rounds.");
+                Console.WriteLine($"\nYou fought a valiant battle\nYOU WIN!\nYou won in {roundCounter} rounds.");
                 End();
                 Main();
             }
@@ -433,12 +445,12 @@ internal class Program
     //=======================================
     static void Countdown()
     {
-        //the timer will run x millisocnds
-        const int SECOND_IN_MILISECOND = 15000;
+        //the timer will run x milliseconds
+        const int SECOND_IN_MILLISECOND = 15000;
         const int MILLISECONDS_IN_SECOND = 1000;
-        Console.WriteLine($"\nRush to get as many dice as you can in {SECOND_IN_MILISECOND / MILLISECONDS_IN_SECOND} seconds for a Bonus Hit!\nPress Enter");
+        Console.WriteLine($"\nRush to get as many dice as you can in {SECOND_IN_MILLISECOND / MILLISECONDS_IN_SECOND} seconds for a Bonus Hit!\nPress Enter");
         
-        timer = new Timer(SECOND_IN_MILISECOND);
+        timer = new Timer(SECOND_IN_MILLISECOND);
         timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
 
         WaitForKey(ConsoleKey.Enter);
@@ -478,10 +490,10 @@ internal class Program
                     cursorRow++;
                     break;
                 case ConsoleKey.RightArrow:
-                    cursorlCol++;
+                    cursorCol++;
                     break;
                 case ConsoleKey.LeftArrow:
-                    cursorlCol--;
+                    cursorCol--;
                     break;
                 case ConsoleKey.Q:
                     End();
@@ -498,20 +510,20 @@ internal class Program
                 cursorRow = maxHeight;
                 cursorRow = maxHeight;
             }
-            else if (cursorlCol == minHeightWidth)
+            else if (cursorCol == minHeightWidth)
             {
-                cursorlCol = maxWidth;
+                cursorCol = maxWidth;
             }
             else if (cursorRow == maxHeight)
             {
                 cursorRow = minHeightWidth;
             }
-            else if (cursorlCol ==maxWidth)
+            else if (cursorCol ==maxWidth)
             {
-                cursorlCol = minHeightWidth;
+                cursorCol = minHeightWidth;
             }
 
-            Console.SetCursorPosition(cursorlCol, cursorRow);
+            Console.SetCursorPosition(cursorCol, cursorRow);
     }
 
     //=======================================
@@ -639,8 +651,8 @@ internal class Program
     {
         Console.Clear();
         const int MINUS_WIDTH = 10;
-        const int MINUS_HEITH_TITLE = 8;
-        const int MINUS_HEITH_NAME = 6;
+        const int MINUS_HEIGH_TITLE = 8;
+        const int MINUS_HEIGH_NAME = 6;
         const int DIV = 2;
 
         string[] credits = {"EXECUTIVE PRODUCER", "PRODUCER","STORY BY", "DESIGNER", "UI ARTIST", "LEAD LEVEL DESIGNER",
@@ -652,9 +664,9 @@ internal class Program
         //display each element of the array in the middle of screen
         foreach (string c in credits)
         {
-            Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH_TITLE);
+            Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEIGH_TITLE);
             Console.WriteLine("{0} ", c);
-            Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEITH_NAME);
+            Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEIGH_NAME);
             Console.WriteLine("Veronika Vilenski");
             Pause(2000);
             Console.Clear();
