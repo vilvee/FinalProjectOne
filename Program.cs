@@ -68,6 +68,8 @@ internal class Program
                     Credits();
                     break;
                 case 5:
+                    Console.Clear();
+                    End();
                     return 0;
                  default:
                     Console.Beep();
