@@ -178,7 +178,7 @@ internal class Program
         Console.WriteLine("\nVillain: " + Prompt());
         Pause(pauseTime);
 
-        Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain\nPress Enter to continue");
+        Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain");
         Pause(pauseTime);
 
         //Start timer and random dice locations
