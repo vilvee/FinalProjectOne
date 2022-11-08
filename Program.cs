@@ -554,7 +554,7 @@ internal class Program
         myScore = 100;
     // ==================================
     // 5 turns to play. Two dice are rolled.
-    // The total is substracted from HP.
+    // The total is subtracted from HP.
     // Once one reaches 0 game over
     // ====================================
 
