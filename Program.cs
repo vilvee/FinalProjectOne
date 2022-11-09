@@ -122,7 +122,6 @@ internal class Program
     //===========================
     static void End()
     {
-
         // will display countdown 
         for (int i = 5; i >= 0; i--)
         {
@@ -189,7 +188,6 @@ internal class Program
         Console.WriteLine($"You got a total Bonus of {bonusHit}.\nPress Enter to continue");
         Pause(pauseTime);
         
-
         //substract total bonus from aiScore
         aiScore -= bonusHit;
         EndGame();
@@ -203,14 +201,11 @@ internal class Program
     //=======================================
     static void BossFight()
     {
-    
     // ==================================
     // 5 turns to play. Two dice are rolled.
     // The total is subtract from HP.
     // Once one reaches 0 game over
     // ====================================
-
-        int turns;
 
         Console.WriteLine(@$"
     You have 5 turns to attack the Villain
@@ -219,11 +214,14 @@ internal class Program
         //wait for Enter input
          WaitForKey(ConsoleKey.Enter);
 
+        int turns;
         for (turns = 5; turns > 0; turns--)
         {
+            //verify end game conditions
             EndGame();
-            //Calculate score
             Console.Clear();
+
+            //Calculate score
             HealthDisplay();
 
             //Count of dice rolls left
@@ -272,12 +270,23 @@ internal class Program
 
     }
 
+//===========================
+    // Roll a random dice
+    //===========================
+    static int DiceRoll()
+    {
+
+        Random dice = new();
+        int rolls = dice.Next(1, 11);
+        return rolls;
+    }
+
     //=======================================
     // Roll the dice and add totals
     //=======================================
     static void RollDice()
-{
-        //roll the dice
+    {
+
         int myRollOne = DiceRoll();
         int myRollTwo = DiceRoll();
         int aiRollOne = DiceRoll();
@@ -365,17 +374,6 @@ internal class Program
 
     }
     
-    //===========================
-    // Roll a random dice
-    //===========================
-    static int DiceRoll()
-    {
-        //new random dice
-        Random dice = new();
-        int roll = dice.Next(1, 11);
-        return roll;
-    }
-
     //=======================================
     // Coordinates for the dice sprite height
     //=======================================
