@@ -30,9 +30,14 @@ internal class Program
     {
         //Title of the console
         const string TITLE = "DICE ADVENTURERS";
-        Console.Title = TITLE;
-        Intro();
+        Title(TITLE);
+        Intro(TITLE);
         StartMenu();
+    }
+
+    static void Title (string prompt)
+    {
+        Console.Title = prompt;
     }
 
     static int EnterInt (string prompt)
@@ -64,7 +69,7 @@ internal class Program
 
             choice = EnterInt(MENU);
 
-            if (choice == 5) 
+            if (choice == 5)
             {
                 End();
                 break;
@@ -73,7 +78,7 @@ internal class Program
             switch (choice)
             {
                 case 1:
-                    IntroAdventure();
+                    Adventure();
                     break;
                 case 2:
                     IdlePlay();
@@ -98,7 +103,7 @@ internal class Program
     //===========================
     // Splash screen
     //===========================
-    static void Intro()
+    static void Intro(string title)
     {
         //code for splash screen
         const int MINUS_WIDTH = 10;
@@ -108,11 +113,10 @@ internal class Program
         // DICE ADVENTURERS would be in black on a red background in the middle of the screen
         Console.BackgroundColor = ConsoleColor.Red;
         Console.ForegroundColor = ConsoleColor.Black;
-        const string S = "DICE ADVENTURERS";
 
         //position of the title
         Console.SetCursorPosition( Console.WindowWidth/ DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEIGHT);
-        Console.WriteLine(S);
+        Console.WriteLine(title);
         Pause(2000);
 
         //resetting colors for the next text to come
@@ -137,7 +141,7 @@ internal class Program
     {
         string s;
 
-        // will display countdown 
+        // will display countdown
         for (int i = 5; i >= 0; i--)
         {
             s = $"\rThe Game will quit in {i} ";
@@ -157,7 +161,6 @@ internal class Program
         string s = "\nDuring one villain's long long long long long long long and tedious battle monologue...";
         Console.WriteLine(s);
         Pause(4000);
-        Adventure();
     }
 
     //===========================
@@ -165,6 +168,11 @@ internal class Program
     //===========================
     static void Adventure()
     {
+        Console.Clear();
+        const string STAGE_NAME = "ADVENTURE";
+        Title(STAGE_NAME);
+        Intro(STAGE_NAME);
+        IntroAdventure();
         Console.Clear();
 
         //level progression
@@ -175,18 +183,19 @@ internal class Program
             EndGame();
             BossFight();
             roundCounter++;
-        } 
-        
+        }
+
         EndGame();
         End();
-        
+
     }
-    
+
     //=======================================
     // Adventure levels
     //=======================================
     static void Level()
     {
+
         const int pauseTime = 1000;
         HealthDisplay();
 
@@ -195,7 +204,7 @@ internal class Program
         Console.WriteLine(VILLAIN_TALKS + Prompt());
         Pause(pauseTime);
 
-        const string INSTRUCTIONS =  "\nUse the arrow keys to get to the dice\n";
+        const string INSTRUCTIONS =  "\nUse the arrow keys to get to the dice";
         Console.WriteLine(INSTRUCTIONS);
         Pause(pauseTime);
 
@@ -203,17 +212,17 @@ internal class Program
         const int time = 15000;
         Countdown(time);
         DiceRandomChase();
-       
+        Console.Clear();
         string bonusCount = $"You got a total Bonus of {bonusHit}.";
         Console.WriteLine(bonusCount);
         Pause(pauseTime);
-        
+
         //substract total bonus from aiScore
         aiScore -= bonusHit;
         EndGame();
         const string PRESS_ENTER = "\nPress Enter to continue";
         WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
-        
+
         Console.Clear();
     }
 
@@ -228,13 +237,15 @@ internal class Program
     // Once one reaches 0 game over
     // ====================================
 
+        const string STAGE_NAME = "BOSS FIGHT";
+        Intro(STAGE_NAME);
         const string PRESS_ENTER = "\nPress Enter to continue";
         int turns = 5;
         string instructions = @$"
     You have {turns} turns to attack the Villain
     Press Enter to Roll
     " + PRESS_ENTER;
-            
+
         //wait for Enter input
         WaitForKey(instructions, ConsoleKey.Enter);
 
@@ -252,11 +263,11 @@ internal class Program
             Console.WriteLine(turnsLeft);
             Pause(1000);
 
-            RollDice();
+            DiceTotals();
             DiceComparisons();
 
             //wait for Enter and check for end game condition
-            WaitForKey(PRESS_ENTER, ConsoleKey.Enter); 
+            WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
         }
 
             Console.Clear();
@@ -264,35 +275,35 @@ internal class Program
 
             //Final message based on who had a better game
             FinalDiceComparison();
-            
+
             Console.Clear();
     }
-    
+
     //=======================================
     // End game conditions
     //=======================================
     static void EndGame()
     {
-        string youDied = $"\nYOU DIED\n Better luck next time.\n You played {roundCounter} rounds.";
+        string youDied = $"\nYOU DIED\nBetter luck next time.\nYou played {roundCounter} rounds.";
         string youWin = $"\nYou fought a valiant battle\nYOU WIN!\nYou won in {roundCounter} rounds.";
+        string bothLose = $"\nYou both fell in battle as you landed your last epic hits\nYou played {roundCounter} rounds.";
+        const string PRESS_ENTER = "\nPress Enter to exit";
 
         if (myScore <= 0 || aiScore <= 0)
         {
             Console.Clear();
             HealthDisplay();
-            if (myScore < aiScore)
-            {
-                Console.WriteLine(youDied);
-                End();
-                Main();
-            }
-            else if (myScore > aiScore)
-            {
-                Console.WriteLine(youWin);
-                End();
-                Main();
-            }
+
+            if (myScore < aiScore) Console.WriteLine(youDied);
+
+            else if (myScore > aiScore) Console.WriteLine(youWin);
+            
+            else Console.Write(bothLose);
+
+            WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
+            End();
         }
+
 
     }
 
@@ -310,47 +321,37 @@ internal class Program
     //=======================================
     // Roll the dice and add totals
     //=======================================
-    static void RollDice()
+    static void DiceTotals()
     {
+        int [] rolls = new int[4];
 
-        int myRollOne = DiceRoll();
-        int myRollTwo = DiceRoll();
-        int aiRollOne = DiceRoll();
-        int aiRollTwo = DiceRoll();
+        for(int i = 0; i < 4; i++)
+        {
+            rolls[i] = DiceRoll();
+        }
 
-        //Calculate totals
-        myTotal = myRollOne + myRollTwo;
-        aiTotal = aiRollOne + aiRollTwo;
+        myTotal = rolls[0] + rolls[1];
+        aiTotal = rolls[2] + rolls[3];
 
         Console.WriteLine(@$"
-        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
-           
-        The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
+        You rolled a {rolls[0]} and a {rolls[1]} with a total of {myTotal}
+
+        The Villain rolled a {rolls[2]} and a {rolls[3]} with a total of {aiTotal}");
     }
-   
+
     //=======================================
     // Compare who landed better dice
     //=======================================
    static void DiceComparisons()
    {
-    if (myTotal > aiTotal)
-            {
-                Pause(1000);
-                Console.WriteLine("\nYou landed a good hit!");
-            }
+        if (myTotal > aiTotal) Console.WriteLine("\nYou landed a good hit!");
 
-            else if (myTotal < aiTotal)
-            {
-                Pause(1000);
-                Console.WriteLine("\nYou were clumsy!");
-            }
-            else
-            {
-                Pause(1000);
-                Console.WriteLine("\nYou both rolled the same numbers.");
-            }
+        else if (myTotal < aiTotal) Console.WriteLine("\nYou were clumsy!");
+
+        else Console.WriteLine("\nYou both rolled the same numbers.");
+
    }
-    
+
     //=======================================
     // Compare had a better boss fight
     //=======================================
@@ -385,11 +386,11 @@ internal class Program
             aiScore = 0;
         }
         if (myScore < 0)
-        {   
+        {
             myScore = 0;
-        } 
+        }
     }
-    
+
     //=======================================
     // Displays Health
     //=======================================
@@ -401,13 +402,13 @@ internal class Program
         Console.WriteLine(score);
 
     }
-    
+
     //=======================================
     // Coordinates for the dice sprite height
     //=======================================
     static int CoordinatesWidth()
     {
- 
+
         int[] numbers = Enumerable.Range(10, 100).ToArray();
         Random coordinates = new();
         int index = coordinates.Next(0, numbers.Length);
@@ -419,7 +420,7 @@ internal class Program
     // Coordinates for the dice sprite width
     //=======================================
     static int CoordinatesHeight()
-    { 
+    {
         int[] numbers = Enumerable.Range(5, 20).ToArray();
         Random coordinates = new();
         int index = coordinates.Next(0, numbers.Length);
@@ -448,6 +449,13 @@ internal class Program
         string talking = talk[index];
         return talking;
     }
+static void CountdownTwo(int SECOND_IN_MILLISECOND )
+    {
+
+        timer = new Timer(SECOND_IN_MILLISECOND);
+        timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+        timer.Start();
+    }
 
     //=======================================
     // START TIMER
@@ -458,7 +466,7 @@ internal class Program
         const int MILLISECONDS_IN_SECOND = 1000;
         string instructions = $"\nRush to get as many dice as you can in {SECOND_IN_MILLISECOND / MILLISECONDS_IN_SECOND} seconds for a Bonus Hit!";
         Console.WriteLine(instructions);
-        
+
         timer = new Timer(SECOND_IN_MILLISECOND);
         timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
 
@@ -473,12 +481,12 @@ internal class Program
     //=======================================
  static void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            // End condition 
+            // End condition
             elapsed = true;
             timer.Stop();
 
         }
-     
+
     //=======================================
     // Navigation keys
     //=======================================
@@ -489,7 +497,7 @@ internal class Program
         int maxHeight = Console.WindowHeight-1;
         int maxWidth = Console.WindowWidth-1;
         const string ERROR = "quack";
-        
+
         //set the cursor's new position
             key = Console.ReadKey(true);
             switch (key.Key)
@@ -545,11 +553,10 @@ internal class Program
     {
         //array display the image of dice
         const int ARRAY_MIN = 0;
-        const int ARRAY_MAX = 5;
         const int offSet = 1;
         string[] dice = { "[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]" };
         Random diceRd = new Random();
-        int diceSpriteNum = diceRd.Next(ARRAY_MIN, ARRAY_MAX);
+        int diceSpriteNum = diceRd.Next(ARRAY_MIN, dice.Length);
         string diceSprite = dice[diceSpriteNum];
         int spriteIndex = Array.IndexOf(dice, diceSprite);
 
@@ -581,109 +588,64 @@ internal class Program
     //=======================================
     static void IdlePlay()
     {
+        const string STAGE_NAME = "IDLE PLAY";
+        Title(STAGE_NAME);
+        Intro(STAGE_NAME);
         Console.Clear();
 
-        //set the health for idle mode
+        //set the health for idle mode and round counter
         aiScore = 100;
         myScore = 100;
+        roundCounter = 0;
 
     // ==================================
-    // 5 turns to play. Two dice are rolled.
+    // Two dice are rolled.
     // The total is subtracted from HP.
     // Once one reaches 0 game over
     // ====================================
 
-
+        HealthDisplay();
         //wait for Enter input
         const string PRESS_ENTER = "\nPress Enter to roll";
         const string INSTRUCTIONS = "\nRoll to attack the Villain.\n" + PRESS_ENTER;
+        bool endGame = aiScore > 0 || myScore > 0;
         WaitForKey(INSTRUCTIONS, ConsoleKey.Enter);
 
-        while (aiScore > 0 || myScore > 0)
+        while (endGame)
         {
-            
-            //check for end game condition and display health
-            EndGame();
+            roundCounter++;
             Console.Clear();
+
+            //game progress
+            DiceTotals();
+            DiceComparisons();
             HealthDisplay();
-            Pause(1000);
-
-            int myRollOne = DiceRoll();
-            int myRollTwo = DiceRoll();
-            int aiRollOne = DiceRoll();
-            int aiRollTwo = DiceRoll();
-
-            //Calculate totals
-            myTotal = myRollOne + myRollTwo;
-            aiTotal = aiRollOne + aiRollTwo;
-
-            Console.WriteLine(@$"
-        You rolled a {myRollOne} and a {myRollTwo} with a total of {myTotal}
-           
-        The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
-
-            //Display a message based on who landed better score
-            const string GOOD_HIT = "\nYou landed a good hit!"; 
-            const string BAD_HIT = "\nYou were clumsy!";
-            const string SAME_HIT = "\nYou both rolled the same numbers.";
-
-            if (myTotal > aiTotal)
-            {
-                Pause(1000);
-                Console.WriteLine(GOOD_HIT);
-            }
-
-            else if (myTotal < aiTotal)
-            {
-                Pause(1000);
-                Console.WriteLine(BAD_HIT);
-            }
-            else
-            {
-                Pause(1000);
-                Console.WriteLine(SAME_HIT);
-            }
-
             WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
+            EndGame();
         }
-
-            Console.Clear();
-            HealthDisplay();
-
-            //Final message based on who had a better game
-            const string GOOD_FIGHT = "\nYou had a good fight!n" + PRESS_ENTER;
-            const string BAD_FIGHT = "You call this a fight?!!\n" + PRESS_ENTER;
-            if (myScore > aiScore)
-            {
-                Pause(1000);
-                WaitForKey(GOOD_FIGHT, ConsoleKey.Enter);
-            }
-            else
-            {
-                Pause(1000);
-                WaitForKey(BAD_FIGHT, ConsoleKey.Enter);
-            }
-            End();
-            Main();
     }
-    
+
     //=======================================
     // Chase the dice game
     //=======================================
     static void ChaseTheDice()
     {
+
         Console.Clear();
         const int time = 30000;
+        const string STAGE_NAME = "DICE CHASE";
+        Title(STAGE_NAME);
+        Intro(STAGE_NAME);
 
         //Start timer
         Countdown(time);
         DiceRandomChase();
 
+        Console.Clear();
         string bonus =$"Your total is {bonusHit}.\nPress Enter to continue";
         WaitForKey(bonus, ConsoleKey.Enter);
         Console.Clear();
         EndGame();
-        Main();
     }
 
     //=======================================
@@ -691,6 +653,9 @@ internal class Program
     //=======================================
     static void DiceRandomChase()
     {
+  
+        bonusHit =0;
+
          //offset to get die
         const int MIN_WIDTH = 2;
         const int MAX_WIDTH = 6;
@@ -698,46 +663,50 @@ internal class Program
 
         while (!elapsed)
         {
+            
+            //Dice sprite and the corresponding Index
+            (string sprite, int indexSprite) levelOne = DiceSprite();
+            string diceSprite = levelOne.sprite;
+            int spriteIndex = levelOne.indexSprite;
+
+            //Random dice coordinates
+            int diceWidth = CoordinatesWidth();
+            int diceHeight = CoordinatesHeight();
+            bool coord;
+
+            //dice will generate at this position
+            Console.SetCursorPosition(diceWidth, diceHeight);
+            Console.Write(levelOne.sprite);
+
+            //start game at this position
+            Console.SetCursorPosition(cursorCol, cursorRow);
+
+            do
             {
-                //Dice sprite and the corresponding Index
-                (string sprite, int indexSprite) levelOne = DiceSprite();
-                string diceSprite = levelOne.sprite;
-                int spriteIndex = levelOne.indexSprite;
 
-                //Random dice coordinates
-                int diceWidth = CoordinatesWidth();
-                int diceHeight = CoordinatesHeight();
-                bool coord;
+                Keys();
+                
+                //Cursor on dice check
+                coord = cursorRow == diceHeight && cursorCol <= diceWidth + MAX_WIDTH && cursorCol >= diceWidth - MIN_WIDTH;
 
-                //dice will generate at this position
-                Console.SetCursorPosition(diceWidth, diceHeight);
-                Console.Write(levelOne.sprite);
+                if (coord)
+                {   
+                    Console.Clear();
+                    Console.SetCursorPosition(cursorCol, cursorRow);
+                    //Bonus hit
+                    bonusHit += levelOne.indexSprite;
+                    Console.Write($"+ {levelOne.indexSprite}");
+                    break;
+                }
 
-                //start game at this position
-                Console.SetCursorPosition(cursorCol, cursorRow);
+                // //exit as soon as timer elapses
+                if (elapsed) break;
 
-                do
-                {
-                    Keys();
 
-                    //Cursor on dice check
-                    coord = cursorRow == diceHeight && cursorCol <= diceWidth + MAX_WIDTH && cursorCol >= diceWidth - MIN_WIDTH;
-
-                    //exit as soon as timer elapses
-                    if (elapsed)
-                    {
-                        break;
-                    }
-
-                } while (!coord);
-
-                Console.Clear();
-
-                //Bonus hit
-                bonusHit += levelOne.indexSprite;
-            }
+            } while (!coord);
         }
     }
+
     //=======================================
     // Game credits
     //=======================================
@@ -749,10 +718,11 @@ internal class Program
         const int MINUS_HEIGH_NAME = 6;
         const int DIV = 2;
         const string MY_NAME = "Veronika Vilenski";
-
+        const string INTRO = "CREDITS";
         string[] credits = {"EXECUTIVE PRODUCER", "PRODUCER","STORY BY", "DESIGNER", "UI ARTIST", "LEAD LEVEL DESIGNER",
             "LEAD ENGINEER", "QUALITY ASSURANCE", "PLAYTESTER", "SPECIAL THANKS:"};
-        Intro();
+        Title(INTRO);
+        Intro(INTRO);
         Console.BackgroundColor = ConsoleColor.Red;
         Console.ForegroundColor = ConsoleColor.Black;
 
