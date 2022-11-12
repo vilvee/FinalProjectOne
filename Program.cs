@@ -554,7 +554,7 @@ static void CountdownTwo(int SECOND_IN_MILLISECOND )
         //array display the image of dice
         const int ARRAY_MIN = 0;
         const int offSet = 1;
-        string[] dice = { "[o]", "[oo]", "[ooo]", "[oooo]", "[ooooo]", "[oooooo]" };
+        string[] dice = { "[o]", "[oo]", "[ooo]", "[oo oo]", "[oo o oo]", "[ooo ooo]" };
         Random diceRd = new Random();
         int diceSpriteNum = diceRd.Next(ARRAY_MIN, dice.Length);
         string diceSprite = dice[diceSpriteNum];
