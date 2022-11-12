@@ -29,19 +29,27 @@ internal class Program
     private static void Main()
     {
         //Title of the console
-        Console.Title = "DICE ADVENTURERS";
+        const string TITLE = "DICE ADVENTURERS";
+        Console.Title = TITLE;
         Intro();
         StartMenu();
     }
 
+    static int EnterInt (string prompt)
+    {
+        int number;
+        Console.Write(prompt);
+        int.TryParse(Console.ReadLine(), out number);
+        return number;
+    }
     //===========================
     // Start menu selection
     //===========================
-    static int StartMenu()
+    static void StartMenu()
     {
-        do
-        {
-            Console.Write(@"
+        int choice;
+        const string INVALID_INPUT = "Invalid input, restarting menu...";
+        const string MENU = (@"
     1. Play
     2. Idle Play: Boss Fight
     3. Chase The Dice
@@ -50,8 +58,17 @@ internal class Program
 
     Please Enter a Choice
 ");
-            //if the choice is invalid, set to default case and restart menu
-            int.TryParse(Console.ReadLine(), out int choice);
+
+        do
+        {
+
+            choice = EnterInt(MENU);
+
+            if (choice == 5) 
+            {
+                End();
+                break;
+            }
 
             switch (choice)
             {
@@ -67,19 +84,15 @@ internal class Program
                 case 4:
                     Credits();
                     break;
-                case 5:
-                    Console.Clear();
-                    End();
-                    return 0;
                  default:
                     Console.Beep();
-                    Console.Write("Invalid input, restarting menu...");
+                    Console.Write(INVALID_INPUT);
                     Pause(1000);
                     Console.Clear();
                     break;
             }
         }
-        while (true);
+        while (choice != 5);
     }
 
     //===========================
@@ -122,10 +135,13 @@ internal class Program
     //===========================
     static void End()
     {
+        string s;
+
         // will display countdown 
         for (int i = 5; i >= 0; i--)
         {
-            Console.Write($"\rThe Game will quit in {i} ");
+            s = $"\rThe Game will quit in {i} ";
+            Console.Write(s);
             Pause(1000);
         }
         Console.Clear();
@@ -136,9 +152,10 @@ internal class Program
     //===========================
     static void IntroAdventure()
     {
-        //this text will appear before starting the game
+        //this text will appear as intro to the game
         Console.Clear();
-        Console.WriteLine("\nDuring one villain's long long long long long long long and tedious battle monologue...");
+        string s = "\nDuring one villain's long long long long long long long and tedious battle monologue...";
+        Console.WriteLine(s);
         Pause(4000);
         Adventure();
     }
@@ -174,10 +191,12 @@ internal class Program
         HealthDisplay();
 
         //Villain talks
-        Console.WriteLine("\nVillain: " + Prompt());
+        const string VILLAIN_TALKS = "\nVillain: ";
+        Console.WriteLine(VILLAIN_TALKS + Prompt());
         Pause(pauseTime);
 
-        Console.WriteLine("\nUse the arrow keys to get to the dice\nRoll to attack the Villain");
+        const string INSTRUCTIONS =  "\nUse the arrow keys to get to the dice\n";
+        Console.WriteLine(INSTRUCTIONS);
         Pause(pauseTime);
 
         //Start timer and random dice locations
@@ -185,13 +204,15 @@ internal class Program
         Countdown(time);
         DiceRandomChase();
        
-        Console.WriteLine($"You got a total Bonus of {bonusHit}.\nPress Enter to continue");
+        string bonusCount = $"You got a total Bonus of {bonusHit}.";
+        Console.WriteLine(bonusCount);
         Pause(pauseTime);
         
         //substract total bonus from aiScore
         aiScore -= bonusHit;
         EndGame();
-        WaitForKey(ConsoleKey.Enter);
+        const string PRESS_ENTER = "\nPress Enter to continue";
+        WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
         
         Console.Clear();
     }
@@ -207,15 +228,17 @@ internal class Program
     // Once one reaches 0 game over
     // ====================================
 
-        Console.WriteLine(@$"
-    You have 5 turns to attack the Villain
-    Press Enter to Roll");
+        const string PRESS_ENTER = "\nPress Enter to continue";
+        int turns = 5;
+        string instructions = @$"
+    You have {turns} turns to attack the Villain
+    Press Enter to Roll
+    " + PRESS_ENTER;
             
         //wait for Enter input
-         WaitForKey(ConsoleKey.Enter);
+        WaitForKey(instructions, ConsoleKey.Enter);
 
-        int turns;
-        for (turns = 5; turns > 0; turns--)
+        for (turns = 5 ; turns > 0; turns--)
         {
             //verify end game conditions
             EndGame();
@@ -225,15 +248,15 @@ internal class Program
             HealthDisplay();
 
             //Count of dice rolls left
-            Console.WriteLine($"\nYou have {turns} rolls left");
+            string turnsLeft = $"\nYou have {turns} rolls left";
+            Console.WriteLine(turnsLeft);
             Pause(1000);
 
             RollDice();
             DiceComparisons();
 
             //wait for Enter and check for end game condition
-            Console.WriteLine("\nPress Enter to continue");
-            WaitForKey(ConsoleKey.Enter);    
+            WaitForKey(PRESS_ENTER, ConsoleKey.Enter); 
         }
 
             Console.Clear();
@@ -250,19 +273,22 @@ internal class Program
     //=======================================
     static void EndGame()
     {
+        string youDied = $"\nYOU DIED\n Better luck next time.\n You played {roundCounter} rounds.";
+        string youWin = $"\nYou fought a valiant battle\nYOU WIN!\nYou won in {roundCounter} rounds.";
+
         if (myScore <= 0 || aiScore <= 0)
         {
             Console.Clear();
             HealthDisplay();
             if (myScore < aiScore)
             {
-                Console.WriteLine($"\nYOU DIED\n Better luck next time.\n You played {roundCounter} rounds.");
+                Console.WriteLine(youDied);
                 End();
                 Main();
             }
             else if (myScore > aiScore)
             {
-                Console.WriteLine($"\nYou fought a valiant battle\nYOU WIN!\nYou won in {roundCounter} rounds.");
+                Console.WriteLine(youWin);
                 End();
                 Main();
             }
@@ -330,17 +356,19 @@ internal class Program
     //=======================================
     static void FinalDiceComparison()
     {
+        const string PRESS_ENTER = "\nPress Enter to continue";
+        const string GOOD_FIGHT = "\nYou had a good fight!\n" + PRESS_ENTER;
+        const string BAD_FIGHT = "\nYou can do better!\n" + PRESS_ENTER;
+
         if (myScore > aiScore)
         {
             Pause(1000);
-            Console.WriteLine("\nYou had a good fight!\nPress Enter");
-            WaitForKey(ConsoleKey.Enter);
+            WaitForKey(GOOD_FIGHT, ConsoleKey.Enter);
         }
         else
         {
             Pause(1000);
-            Console.WriteLine("You call this a fight?!!\nPress Enter");
-            WaitForKey(ConsoleKey.Enter);
+            WaitForKey(BAD_FIGHT, ConsoleKey.Enter);
         }
     }
     //=======================================
@@ -369,8 +397,8 @@ internal class Program
     {
         //to not display negative score
         ScoreHandler();
-
-        Console.WriteLine($"Your Health :     {myScore}\nVillain's Health: {aiScore}");
+        string score = $"Your Health :     {myScore}\nVillain's Health: {aiScore}";
+        Console.WriteLine(score);
 
     }
     
@@ -428,12 +456,14 @@ internal class Program
     {
         //the timer will run x milliseconds
         const int MILLISECONDS_IN_SECOND = 1000;
-        Console.WriteLine($"\nRush to get as many dice as you can in {SECOND_IN_MILLISECOND / MILLISECONDS_IN_SECOND} seconds for a Bonus Hit!\nPress Enter");
+        string instructions = $"\nRush to get as many dice as you can in {SECOND_IN_MILLISECOND / MILLISECONDS_IN_SECOND} seconds for a Bonus Hit!";
+        Console.WriteLine(instructions);
         
         timer = new Timer(SECOND_IN_MILLISECOND);
         timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
 
-        WaitForKey(ConsoleKey.Enter);
+        const string PRESS_ENTER = "\nPress Enter to continue";
+        WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
         Console.Clear();
         timer.Start();
     }
@@ -456,8 +486,9 @@ internal class Program
     {
         ConsoleKeyInfo key;
         int minHeightWidth =0;
-        int maxHeight =Console.WindowHeight-1;
-        int maxWidth =Console.WindowWidth-1;
+        int maxHeight = Console.WindowHeight-1;
+        int maxWidth = Console.WindowWidth-1;
+        const string ERROR = "quack";
         
         //set the cursor's new position
             key = Console.ReadKey(true);
@@ -482,7 +513,7 @@ internal class Program
                     break;
                 default:
                     Console.Beep();
-                    Console.Write("quack");
+                    Console.Write(ERROR);
                     break;
             }
             //resetting the cursor if user hits boundary
@@ -521,6 +552,8 @@ internal class Program
         int diceSpriteNum = diceRd.Next(ARRAY_MIN, ARRAY_MAX);
         string diceSprite = dice[diceSpriteNum];
         int spriteIndex = Array.IndexOf(dice, diceSprite);
+
+        //break down of sprites
         (string, int) sprites;
         sprites.Item1 = diceSprite;
         sprites.Item2 = spriteIndex + offSet;
@@ -531,8 +564,10 @@ internal class Program
     //Wait for key input
     //https://stackoverflow.com/questions/71315422/make-user-press-specific-key-to-progress-in-program
     //==================================
-    static void WaitForKey(ConsoleKey key, ConsoleModifiers modifiers = default)
+    static void WaitForKey(string prompt, ConsoleKey key, ConsoleModifiers modifiers = default)
 {
+    Console.Write(prompt);
+
     while (true)
     {
         var keyInfo = Console.ReadKey(true);
@@ -547,19 +582,22 @@ internal class Program
     static void IdlePlay()
     {
         Console.Clear();
+
         //set the health for idle mode
         aiScore = 100;
         myScore = 100;
+
     // ==================================
     // 5 turns to play. Two dice are rolled.
     // The total is subtracted from HP.
     // Once one reaches 0 game over
     // ====================================
 
-        Console.WriteLine("\nRoll to attack the Villainl.\nPress Enter to Roll");
-            
+
         //wait for Enter input
-         WaitForKey(ConsoleKey.Enter);
+        const string PRESS_ENTER = "\nPress Enter to roll";
+        const string INSTRUCTIONS = "\nRoll to attack the Villain.\n" + PRESS_ENTER;
+        WaitForKey(INSTRUCTIONS, ConsoleKey.Enter);
 
         while (aiScore > 0 || myScore > 0)
         {
@@ -585,41 +623,45 @@ internal class Program
         The Villain rolled a {aiRollOne} and a {aiRollTwo} with a total of {aiTotal}");
 
             //Display a message based on who landed better score
+            const string GOOD_HIT = "\nYou landed a good hit!"; 
+            const string BAD_HIT = "\nYou were clumsy!";
+            const string SAME_HIT = "\nYou both rolled the same numbers.";
+
             if (myTotal > aiTotal)
             {
                 Pause(1000);
-                Console.WriteLine("\nYou landed a good hit!\nPress Enter to contiue");
+                Console.WriteLine(GOOD_HIT);
             }
 
             else if (myTotal < aiTotal)
             {
                 Pause(1000);
-                Console.WriteLine("\nYou were clumsy!\nPress Enter to contiue");
+                Console.WriteLine(BAD_HIT);
             }
             else
             {
                 Pause(1000);
-                Console.WriteLine("\nYou both rolled the same numbers.\nPress Enter to contiue");
+                Console.WriteLine(SAME_HIT);
             }
-            WaitForKey(ConsoleKey.Enter);
+
+            WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
         }
 
             Console.Clear();
-
             HealthDisplay();
 
             //Final message based on who had a better game
+            const string GOOD_FIGHT = "\nYou had a good fight!n" + PRESS_ENTER;
+            const string BAD_FIGHT = "You call this a fight?!!\n" + PRESS_ENTER;
             if (myScore > aiScore)
             {
                 Pause(1000);
-                Console.WriteLine("\nYou had a good fight!\nPress Enter");
-                WaitForKey(ConsoleKey.Enter);
+                WaitForKey(GOOD_FIGHT, ConsoleKey.Enter);
             }
             else
             {
                 Pause(1000);
-                Console.WriteLine("You call this a fight?!!\nPress Enter");
-                WaitForKey(ConsoleKey.Enter);
+                WaitForKey(BAD_FIGHT, ConsoleKey.Enter);
             }
             End();
             Main();
@@ -633,20 +675,15 @@ internal class Program
         Console.Clear();
         const int time = 30000;
 
-        Console.WriteLine($"\nGet as many dice as you can!");
-        Pause(1000);
-
         //Start timer
         Countdown(time);
         DiceRandomChase();
-       
-        
-            Console.WriteLine($"Your total is {bonusHit}.\nPress Enter to continue");
 
-            WaitForKey(ConsoleKey.Enter);
-            Console.Clear();
-            EndGame();
-            Main();
+        string bonus =$"Your total is {bonusHit}.\nPress Enter to continue";
+        WaitForKey(bonus, ConsoleKey.Enter);
+        Console.Clear();
+        EndGame();
+        Main();
     }
 
     //=======================================
@@ -711,6 +748,7 @@ internal class Program
         const int MINUS_HEIGH_TITLE = 8;
         const int MINUS_HEIGH_NAME = 6;
         const int DIV = 2;
+        const string MY_NAME = "Veronika Vilenski";
 
         string[] credits = {"EXECUTIVE PRODUCER", "PRODUCER","STORY BY", "DESIGNER", "UI ARTIST", "LEAD LEVEL DESIGNER",
             "LEAD ENGINEER", "QUALITY ASSURANCE", "PLAYTESTER", "SPECIAL THANKS:"};
@@ -724,7 +762,7 @@ internal class Program
             Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEIGH_TITLE);
             Console.WriteLine("{0} ", c);
             Console.SetCursorPosition(Console.WindowWidth / DIV - MINUS_WIDTH, Console.WindowHeight / DIV - MINUS_HEIGH_NAME);
-            Console.WriteLine("Veronika Vilenski");
+            Console.WriteLine(MY_NAME);
             Pause(2000);
             Console.Clear();
         }
