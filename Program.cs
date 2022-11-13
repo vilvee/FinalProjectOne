@@ -13,7 +13,7 @@ internal class Program
     // Global Variables Section
     //===========================
     static int roundCounter = 0;
-    static int myScore = 300;
+    static int myScore = 350;
     static int aiScore = 500;
     static int myTotal = 0;
     static int aiTotal = 0;
@@ -251,6 +251,12 @@ internal class Program
         
         for (turns = 5 ; turns > 0; turns--)
         {
+            //verify end game conditions
+            if (myScore <= 0 || aiScore <= 0)
+            {
+                EndGame();
+                break;
+            }
            
             Console.Clear();
 
@@ -263,22 +269,15 @@ internal class Program
             Pause(1000);
 
             DiceTotals();
-            //verify end game conditions
-            if (myScore <= 0 || aiScore <= 0)
-            {
-                EndGame();
-                break;
-            }
-
             DiceComparisons();
             
             //wait for Enter and check for end game condition
             WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
         }
-
+            
             Console.Clear();
             HealthDisplay();
-
+            EndGame();
             //Final message based on who had a better game
             FinalDiceComparison();
             Console.Clear();
@@ -307,6 +306,7 @@ internal class Program
 
             WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
             End();
+            Main();
         }
 
 
@@ -526,7 +526,6 @@ internal class Program
             if (cursorRow == minHeightWidth)
             {
                 cursorRow = maxHeight;
-                cursorRow = maxHeight;
             }
             else if (cursorCol == minHeightWidth)
             {
@@ -536,7 +535,7 @@ internal class Program
             {
                 cursorRow = minHeightWidth;
             }
-            else if (cursorCol ==maxWidth)
+            else if (cursorCol == maxWidth)
             {
                 cursorCol = minHeightWidth;
             }
@@ -651,8 +650,7 @@ internal class Program
         Console.Clear();
         string bonus =$"Your total is {bonusHit}.\nPress Enter to continue";
         WaitForKey(bonus, ConsoleKey.Enter);
-        Console.Clear();
-        EndGame();
+        End();
     }
 
 
