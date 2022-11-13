@@ -248,11 +248,10 @@ internal class Program
 
         //wait for Enter input
         WaitForKey(instructions, ConsoleKey.Enter);
-
+        
         for (turns = 5 ; turns > 0; turns--)
         {
-            //verify end game conditions
-            EndGame();
+           
             Console.Clear();
 
             //Calculate score
@@ -264,8 +263,15 @@ internal class Program
             Pause(1000);
 
             DiceTotals();
-            DiceComparisons();
+            //verify end game conditions
+            if (myScore <= 0 || aiScore <= 0)
+            {
+                EndGame();
+                break;
+            }
 
+            DiceComparisons();
+            
             //wait for Enter and check for end game condition
             WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
         }
@@ -275,7 +281,6 @@ internal class Program
 
             //Final message based on who had a better game
             FinalDiceComparison();
-
             Console.Clear();
     }
 
