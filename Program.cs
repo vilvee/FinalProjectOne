@@ -449,25 +449,18 @@ internal class Program
         string talking = talk[index];
         return talking;
     }
-static void CountdownTwo(int SECOND_IN_MILLISECOND )
-    {
-
-        timer = new Timer(SECOND_IN_MILLISECOND);
-        timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-        timer.Start();
-    }
 
     //=======================================
     // START TIMER
     //=======================================
-    static void Countdown(int SECOND_IN_MILLISECOND )
+    static void Countdown(int secondsInMilliseconds )
     {
         //the timer will run x milliseconds
         const int MILLISECONDS_IN_SECOND = 1000;
-        string instructions = $"\nRush to get as many dice as you can in {SECOND_IN_MILLISECOND / MILLISECONDS_IN_SECOND} seconds for a Bonus Hit!";
+        string instructions = $"\nRush to get as many dice as you can in {secondsInMilliseconds/ MILLISECONDS_IN_SECOND} seconds for a Bonus Hit!";
         Console.WriteLine(instructions);
 
-        timer = new Timer(SECOND_IN_MILLISECOND);
+        timer = new Timer(secondsInMilliseconds);
         timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
 
         const string PRESS_ENTER = "\nPress Enter to continue";
@@ -549,22 +542,31 @@ static void CountdownTwo(int SECOND_IN_MILLISECOND )
     //=======================================
     // Dice images
     //=======================================
-    static public (string, int)  DiceSprite()
+    static public (string[], int)  DiceSprite()
     {
-        //array display the image of dice
+
+         //array display the image of dice
         const int ARRAY_MIN = 0;
         const int offSet = 1;
-        string[] dice = { "[o]", "[oo]", "[ooo]", "[oo oo]", "[oo o oo]", "[ooo ooo]" };
+        
+        string [] one = {"+---------+", "|         |", "|    o    |", "|         |", "+---------+ "};
+        string [] two = {"+---------+", "| o       |", "|         |", "|       o |", "+---------+ ", };
+        string [] three ={"+---------+", "| o       |", "|    o    |", "|       o |", "+---------+ ",};
+        string [] four ={"+---------+", "| o     o |", "|         |",  "| o     o |", "+---------+ ",};
+        string [] five ={"+---------+", "| o     o |", "|    o    |", "| o     o |", "+---------+ ",};
+        string [] six ={"+---------+", "| o     o |", "| o     o |", "| o     o |", "+---------+ ",};
+        string [] []dice =  {one, two, three, four, five, six};
+
         Random diceRd = new Random();
         int diceSpriteNum = diceRd.Next(ARRAY_MIN, dice.Length);
-        string diceSprite = dice[diceSpriteNum];
+        string [] diceSprite = dice[diceSpriteNum];
         int spriteIndex = Array.IndexOf(dice, diceSprite);
 
         //break down of sprites
-        (string, int) sprites;
+        (string[], int) sprites;
         sprites.Item1 = diceSprite;
         sprites.Item2 = spriteIndex + offSet;
-        return sprites;
+        return sprites ;
     }
 
     //==================================
@@ -648,6 +650,7 @@ static void CountdownTwo(int SECOND_IN_MILLISECOND )
         EndGame();
     }
 
+
     //=======================================
     // Randomize dice location and chase them
     //=======================================
@@ -656,46 +659,51 @@ static void CountdownTwo(int SECOND_IN_MILLISECOND )
   
         bonusHit =0;
 
-         //offset to get die
-        const int MIN_WIDTH = 2;
-        const int MAX_WIDTH = 6;
         elapsed = false;
-
+        bool coord;
         while (!elapsed)
         {
             
             //Dice sprite and the corresponding Index
-            (string sprite, int indexSprite) levelOne = DiceSprite();
-            string diceSprite = levelOne.sprite;
-            int spriteIndex = levelOne.indexSprite;
+            (string [] sprite, int indexSprite) dice = DiceSprite();
+            string [] diceSprite = dice.sprite;
+            int spriteIndex = dice.indexSprite;
 
             //Random dice coordinates
             int diceWidth = CoordinatesWidth();
             int diceHeight = CoordinatesHeight();
-            bool coord;
+            
 
             //dice will generate at this position
-            Console.SetCursorPosition(diceWidth, diceHeight);
-            Console.Write(levelOne.sprite);
+            for (int i = 0; i< 5; i++)
+            {  
+                Console.SetCursorPosition(diceWidth, diceHeight++);
+                Console.Write(dice.sprite[i]);
+            }
 
             //start game at this position
             Console.SetCursorPosition(cursorCol, cursorRow);
 
             do
             {
+                const int MAX_HEIGHT = 5;
+                const int MIN_HEIGHT = 2;
+                const int MAX_WIDTH = 10;
+                bool offsetLeft = cursorRow <= diceHeight - MIN_HEIGHT && cursorRow >= diceHeight - MAX_HEIGHT && cursorCol == diceWidth;
+                bool offsetRight = cursorRow <= diceHeight - MIN_HEIGHT && cursorRow >= diceHeight - MAX_HEIGHT && cursorCol == diceWidth + MAX_WIDTH;
+                bool offsetBottom = cursorRow == diceHeight - MIN_HEIGHT && cursorCol >= diceWidth && cursorCol <= diceWidth + MAX_WIDTH;
+                bool offsetTop = cursorRow == diceHeight - MAX_HEIGHT && cursorCol >= diceWidth && cursorCol <= diceWidth + MAX_WIDTH;
+                coord = offsetLeft || offsetRight || offsetBottom || offsetTop;
 
                 Keys();
-                
-                //Cursor on dice check
-                coord = cursorRow == diceHeight && cursorCol <= diceWidth + MAX_WIDTH && cursorCol >= diceWidth - MIN_WIDTH;
 
                 if (coord)
-                {   
+                {
                     Console.Clear();
                     Console.SetCursorPosition(cursorCol, cursorRow);
                     //Bonus hit
-                    bonusHit += levelOne.indexSprite;
-                    Console.Write($"+ {levelOne.indexSprite}");
+                    bonusHit += dice.indexSprite;
+                    Console.Write($"+ {dice.indexSprite}");
                     break;
                 }
 
