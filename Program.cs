@@ -23,7 +23,6 @@ internal class Program
     static bool elapsed = false;
     static int bonusHit = 0;
     static string userName = "";
-    // static string [] userNames = new string [10];
 
     private static void Main()
     {
@@ -38,6 +37,9 @@ internal class Program
         StartMenu();
     }
 
+    //==========================================
+    // Username user input
+    //==========================================
     static string UserName()
     {
         //Show cursor
