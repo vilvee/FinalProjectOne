@@ -22,7 +22,8 @@ internal class Program
     static Timer timer;
     static bool elapsed = false;
     static int bonusHit = 0;
-
+    static string userName = "";
+    // static string [] userNames = new string [10];
 
     private static void Main()
     {
@@ -33,9 +34,21 @@ internal class Program
         Intro(TITLE);
 
         //Start menu selection
+        UserName();
         StartMenu();
     }
 
+    static string UserName()
+    {
+        //Show cursor
+        Console.CursorVisible = true;
+        string s ="Choose a username: ";
+        Console.Write(s);
+        userName = Console.ReadLine();
+        return userName;
+
+    }
+    
     //==========================================
     // Title of the console application
     //==========================================
@@ -62,10 +75,12 @@ internal class Program
     //===========================
     static void StartMenu()
     {
+        Console.Clear();
+
         int choice;
         const string INVALID_INPUT = "\nInvalid input, restarting menu...";
-        const string MENU = (@"
-    Main Menu
+        string MENU = (@$"
+    Make a Choice {userName},
 
     1. Play
     2. Idle Play: Boss Fight
@@ -202,15 +217,18 @@ internal class Program
         Intro(STAGE_NAME);
 
         string instructions = @"Instructions:
-        - Press arrow keys to move
+
+        - Press arrow keys or W/A/S/D to move
         - Press Q to Exit
-        - Press enter to continue
+        - Press Enter to continue
+
         ";
         WaitForKey(instructions);
 
         Console.Clear();
         IntroAdventure();
         Console.Clear();
+
         //level progression
         //Continue game until one of the scores reaches 0
         while (aiScore >= 0 || myScore >= 0)
@@ -356,8 +374,6 @@ internal class Program
             WaitForKey(PRESS_ENTER);
             End();
         }
-
-
     }
 
     //===========================
@@ -365,7 +381,6 @@ internal class Program
     //===========================
     static int DiceRoll()
     {
-
         Random dice = new();
         int rolls = dice.Next(1, 11);
         return rolls;
@@ -451,7 +466,7 @@ internal class Program
     static void HealthDisplay()
     {
         
-        string score = $"Your Health :     {myScore}\nVillain's Health: {aiScore}";
+        string score = $"{userName}'s Health :     {myScore}\nVillain's Health: {aiScore}";
         Console.WriteLine(score);
 
     }
@@ -489,7 +504,7 @@ internal class Program
         //REF for the speech:https://www.scoopwhoop.com/entertainment/times-villains-made-sense-and-convinced-us-they-were-right/
         string[] talk = {"You (humans) move to an area and you multiply and multiply until " +
                 "every natural resource is consumed and the only way you can survive is to spread to another area...",
-                " You had a bad day once, am I right?… You had a bad day and everything changed. Why else would you...",
+                "You had a bad day once, am I right? You had a bad day and everything changed. Why else would you...",
                 "And in a supreme act of selfishness shattered history like a rank amateur, " +
                 "turned the world into a living hell moments away from destruction and ‘I AM’ the villain?",
                 "You have been supplied with a false idol to stop you tearing down this CORRUPT CITY! " +
@@ -497,9 +512,11 @@ internal class Program
                 "This universe is finite, its resources, finite, if life is left unchecked, life will cease to exist. " +
                 "It needs correction… I’m the only one who knows that. At least I’m the only one with the will to act on it!",
                 "I said, these human beings were flawed and murderous. And for that..."};
+        string [] greetings = {"Hey, ", "So, ", "Look around you, ", "You are a hypocrite, ", "You will lose, "};
         Random speech = new();
-        int index = speech.Next(0, talk.Length);
-        string talking = talk[index];
+        int indexT = speech.Next(0, talk.Length);
+        int indexG = speech.Next(0, greetings.Length);
+        string talking = greetings[indexG] + userName + ". " + talk[indexT];
         return talking;
     }
 
@@ -539,53 +556,68 @@ internal class Program
     static void Keys()
     {
         ConsoleKeyInfo key;
-        int minHeightWidth =0;
-        int maxHeight = Console.WindowHeight-1;
-        int maxWidth = Console.WindowWidth-1;
+        int minHeightWidth = 0;
+        int sizeOffset = 1;
+        int maxHeight = Console.WindowHeight;
+        int maxWidth = Console.WindowWidth;
         const string ERROR = "quack";
 
         //set the cursor's new position
-            key = Console.ReadKey(true);
-            switch (key.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    cursorRow--;
-                    break;
-                case ConsoleKey.DownArrow:
-                    cursorRow++;
-                    break;
-                case ConsoleKey.RightArrow:
-                    cursorCol++;
-                    break;
-                case ConsoleKey.LeftArrow:
-                    cursorCol--;
-                    break;
-                case ConsoleKey.Q:
-                    Console.Clear();
-                    End();
-                    Environment.Exit(0);
-                    break;
-                default:
-                    Console.Beep();
-                    Console.Write(ERROR);
-                    break;
-            }
+        key = Console.ReadKey(true);
+        switch (key.Key)
+        {
+            case ConsoleKey.UpArrow:
+                cursorRow--;
+                break;
+            case ConsoleKey.W:
+                cursorRow--;
+                break;
+            case ConsoleKey.DownArrow:
+                cursorRow++;
+                break;
+            case ConsoleKey.S:
+                cursorRow++;
+                break;
+            case ConsoleKey.RightArrow:
+                cursorCol++;
+                break;
+            case ConsoleKey.D:
+                cursorCol++;
+                break;
+            case ConsoleKey.LeftArrow:
+                cursorCol--;
+                break;
+            case ConsoleKey.A:
+                cursorCol--;
+                break;
+            case ConsoleKey.Q:
+                Console.Clear();
+                End();
+                Main();
+                break;
+            default:
+                Console.Beep();
+                Console.Write(ERROR);
+                break;
+        }
+
+            
             //resetting the cursor if user hits boundary
             if (cursorRow == minHeightWidth)
             {
-                cursorRow = maxHeight;
+                cursorRow = maxHeight - sizeOffset;
             }
             else if (cursorCol == minHeightWidth)
             {
-                cursorCol = maxWidth;
+                cursorCol = maxWidth - sizeOffset;
             }
             else if (cursorRow == maxHeight)
             {
-                cursorRow = minHeightWidth;
+                cursorRow = minHeightWidth + sizeOffset;
             }
             else if (cursorCol == maxWidth)
             {
-                cursorCol = minHeightWidth;
+                cursorCol = minHeightWidth + sizeOffset;
             }
 
             Console.SetCursorPosition(cursorCol, cursorRow);
@@ -655,7 +687,6 @@ internal class Program
         Console.Clear();
         Title(STAGE_NAME);
         Intro(STAGE_NAME);
-        
 
         //set the health for idle mode and round counter
         aiScore = 100;
@@ -724,6 +755,8 @@ internal class Program
         string bonus =$"Your total is {bonusHit}.\nPress Enter to continue";
         WaitForKey(bonus);
         End();
+    
+
     }
 
     //=======================================
