@@ -102,7 +102,7 @@ internal class Program
 
             if (choice == 5)
             {
-                End();
+                EndCountdown();
                 break;
             }
 
@@ -171,7 +171,7 @@ internal class Program
     //===========================
     // Exit countdown
     //===========================
-    static void End()
+    static void EndCountdown()
     {
         //Hide cursor
         Console.CursorVisible = false;
@@ -240,7 +240,7 @@ internal class Program
         }
 
         EndGame();
-        End();
+        EndCountdown();
    
     }
 
@@ -372,7 +372,7 @@ internal class Program
             else Console.Write(bothLose);
 
             WaitForKey(PRESS_ENTER);
-            End();
+            EndCountdown();
         }
     }
 
@@ -440,6 +440,7 @@ internal class Program
             WaitForKey(BAD_FIGHT);
         }
     }
+    
     //=======================================
     // Handles scores in BossFight
     //=======================================
@@ -592,8 +593,8 @@ internal class Program
                 break;
             case ConsoleKey.Q:
                 Console.Clear();
-                End();
-                Main();
+                EndCountdown();
+                Environment.Exit(0);
                 break;
             default:
                 Console.Beep();
@@ -670,7 +671,7 @@ internal class Program
         if (keyInfo.Key == quit)
         {
             Console.Clear();
-            End();
+            EndCountdown();
             Environment.Exit(0);
         }
         
@@ -754,7 +755,7 @@ internal class Program
         Console.Clear();
         string bonus =$"Your total is {bonusHit}.\nPress Enter to continue";
         WaitForKey(bonus);
-        End();
+        EndCountdown();
     
 
     }
