@@ -26,7 +26,7 @@ internal class Program
 
     private static void Main()
     {
-
+        
         //Title of the console
         const string TITLE = "DICE ADVENTURERS";
         Title(TITLE);
@@ -274,7 +274,7 @@ internal class Program
     // 5 turns to play. Two dice are rolled.
     // The total is subtract from HP.
     // Once one reaches 0 game over
-    // ====================================
+    // ===================================
 
         Console.Clear();
         const string STAGE_NAME = "BOSS FIGHT";
@@ -289,7 +289,12 @@ internal class Program
         //wait for Enter input
         WaitForKey(instructions);
 
-        for (turns = 5 ; turns > 0; turns--)
+        //OFFSET FOR CURSOR POSITIONS TO PRINT MESSAGES IN CUSTOM ORDER
+        const int OFFSET_TOP = 0;
+        const int OFFSET_MIDDLE = 2;
+        const int OFFSET_BOTTOM = 9;
+
+        for (turns = 4 ; turns >= 0; turns--)
         {
             //verify end game conditions
             if (myScore <= 0 || aiScore <= 0)
@@ -300,17 +305,20 @@ internal class Program
            
             Console.Clear();
 
-            //Calculate score
-            HealthDisplay();
-
+            
+            Console.SetCursorPosition(Console.CursorLeft, OFFSET_MIDDLE);
             //Count of dice rolls left
             string turnsLeft = $"\nYou have {turns} rolls left";
             Console.WriteLine(turnsLeft);
-            Pause(1000);
-
             DiceTotals();
             DiceComparisons();
+
+            Console.SetCursorPosition(Console.CursorLeft, OFFSET_TOP);
+            //Calculate score
+            ScoreHandler();
+            HealthDisplay();
             
+            Console.SetCursorPosition(Console.CursorLeft, OFFSET_BOTTOM);
             //wait for Enter and check for end game condition
             WaitForKey(PRESS_ENTER);
         }
@@ -347,7 +355,6 @@ internal class Program
 
             WaitForKey(PRESS_ENTER);
             End();
-            Main();
         }
 
 
@@ -429,12 +436,13 @@ internal class Program
         //to not display negative score
         if (aiScore < 0)
         {
-            aiScore = 0;
+            aiScore = 0;  
         }
         if (myScore < 0)
         {
-            myScore = 0;
+            myScore = 0;   
         }
+
     }
 
     //=======================================
@@ -442,8 +450,7 @@ internal class Program
     //=======================================
     static void HealthDisplay()
     {
-        //to not display negative score
-        ScoreHandler();
+        
         string score = $"Your Health :     {myScore}\nVillain's Health: {aiScore}";
         Console.WriteLine(score);
 
@@ -652,7 +659,7 @@ internal class Program
 
         //set the health for idle mode and round counter
         aiScore = 100;
-        myScore = 100;
+        myScore = 20;
         roundCounter = 0;
 
     // ==================================
@@ -662,24 +669,39 @@ internal class Program
     // ====================================
 
         HealthDisplay();
+
+        //OFFSET FOR CURSOR POSITIONS TO PRINT MESSAGES IN CUSTOM ORDER
+        const int OFFSET_TOP = 0;
+        const int OFFSET_MIDDLE = 2;
+        const int OFFSET_BOTTOM = 8;
+
         //wait for Enter input
         const string PRESS_ENTER = "\nPress Enter to roll";
         const string INSTRUCTIONS = "\nRoll to attack the Villain.\n" + PRESS_ENTER;
-        bool endGame = aiScore > 0 || myScore > 0;
+        bool endGame = false;
         WaitForKey(INSTRUCTIONS);
 
-        while (endGame)
+        while (!endGame)
         {
             roundCounter++;
             Console.Clear();
 
             //game progress
+            Console.SetCursorPosition(Console.CursorLeft, OFFSET_MIDDLE);
             DiceTotals();
             DiceComparisons();
+
+            Console.SetCursorPosition(Console.CursorLeft, OFFSET_TOP);
+            ScoreHandler();
             HealthDisplay();
+
+            endGame = myScore <= 0 || aiScore <= 0;
+
+            Console.SetCursorPosition(Console.CursorLeft, OFFSET_BOTTOM);
             WaitForKey(PRESS_ENTER);
-            EndGame();
-        }
+            
+        } 
+        EndGame();
     }
 
     //=======================================
@@ -703,7 +725,6 @@ internal class Program
         WaitForKey(bonus);
         End();
     }
-
 
     //=======================================
     // Randomize dice location and chase them
