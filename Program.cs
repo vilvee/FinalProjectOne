@@ -23,38 +23,50 @@ internal class Program
     static bool elapsed = false;
     static int bonusHit = 0;
 
-    //==========================================
-    // Title of the console application and flow
-    //==========================================
+
     private static void Main()
     {
+
         //Title of the console
         const string TITLE = "DICE ADVENTURERS";
         Title(TITLE);
         Intro(TITLE);
+
+        //Start menu selection
         StartMenu();
     }
 
+    //==========================================
+    // Title of the console application
+    //==========================================
     static void Title (string prompt)
     {
         Console.Title = prompt;
     }
 
+    //==========================================
+    //Prompt and user entered parse int
+    //==========================================
     static int EnterInt (string prompt)
     {
         int number;
         Console.Write(prompt);
-        int.TryParse(Console.ReadLine(), out number);
+     
+        //make choice invisible
+        int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out number);
         return number;
     }
+
     //===========================
     // Start menu selection
     //===========================
     static void StartMenu()
     {
         int choice;
-        const string INVALID_INPUT = "Invalid input, restarting menu...";
+        const string INVALID_INPUT = "\nInvalid input, restarting menu...";
         const string MENU = (@"
+    Main Menu
+
     1. Play
     2. Idle Play: Boss Fight
     3. Chase The Dice
@@ -64,8 +76,12 @@ internal class Program
     Please Enter a Choice
 ");
 
+        //5 to quit, 1-4 valid, else invalid and restart menu
         do
         {
+
+            //Hide cursor
+            Console.CursorVisible = false;
 
             choice = EnterInt(MENU);
 
@@ -105,7 +121,10 @@ internal class Program
     //===========================
     static void Intro(string title)
     {
-        //code for splash screen
+        //Hide cursor
+        Console.CursorVisible = false;
+
+        //code for splash screen size
         const int MINUS_WIDTH = 10;
         const int MINUS_HEIGHT = 8;
         const int DIV = 2;
@@ -139,6 +158,9 @@ internal class Program
     //===========================
     static void End()
     {
+        //Hide cursor
+        Console.CursorVisible = false;
+
         string s;
 
         // will display countdown
@@ -156,6 +178,9 @@ internal class Program
     //===========================
     static void IntroAdventure()
     {
+        //Hide cursor
+        Console.CursorVisible = false;
+
         //this text will appear as intro to the game
         Console.Clear();
         string s = "\nDuring one villain's long long long long long long long and tedious battle monologue...";
@@ -168,13 +193,24 @@ internal class Program
     //===========================
     static void Adventure()
     {
-        Console.Clear();
+         //Hide cursor
+        Console.CursorVisible = false;
+
         const string STAGE_NAME = "ADVENTURE";
+        Console.Clear();
         Title(STAGE_NAME);
         Intro(STAGE_NAME);
+
+        string instructions = @"Instructions:
+        - Press arrow keys to move
+        - Press Q to Exit
+        - Press enter to continue
+        ";
+        WaitForKey(instructions);
+
+        Console.Clear();
         IntroAdventure();
         Console.Clear();
-
         //level progression
         //Continue game until one of the scores reaches 0
         while (aiScore >= 0 || myScore >= 0)
@@ -187,7 +223,7 @@ internal class Program
 
         EndGame();
         End();
-
+   
     }
 
     //=======================================
@@ -213,6 +249,9 @@ internal class Program
         Countdown(time);
         DiceRandomChase();
         Console.Clear();
+        
+        //hide cursor
+        Console.CursorVisible = false;
         string bonusCount = $"You got a total Bonus of {bonusHit}.";
         Console.WriteLine(bonusCount);
         Pause(pauseTime);
@@ -221,7 +260,7 @@ internal class Program
         aiScore -= bonusHit;
         EndGame();
         const string PRESS_ENTER = "\nPress Enter to continue";
-        WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
+        WaitForKey(PRESS_ENTER);
 
         Console.Clear();
     }
@@ -237,6 +276,7 @@ internal class Program
     // Once one reaches 0 game over
     // ====================================
 
+        Console.Clear();
         const string STAGE_NAME = "BOSS FIGHT";
         Intro(STAGE_NAME);
         const string PRESS_ENTER = "\nPress Enter to continue";
@@ -247,8 +287,8 @@ internal class Program
     " + PRESS_ENTER;
 
         //wait for Enter input
-        WaitForKey(instructions, ConsoleKey.Enter);
-        
+        WaitForKey(instructions);
+
         for (turns = 5 ; turns > 0; turns--)
         {
             //verify end game conditions
@@ -272,7 +312,7 @@ internal class Program
             DiceComparisons();
             
             //wait for Enter and check for end game condition
-            WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
+            WaitForKey(PRESS_ENTER);
         }
             
             Console.Clear();
@@ -281,6 +321,7 @@ internal class Program
             //Final message based on who had a better game
             FinalDiceComparison();
             Console.Clear();
+    
     }
 
     //=======================================
@@ -304,7 +345,7 @@ internal class Program
             
             else Console.Write(bothLose);
 
-            WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
+            WaitForKey(PRESS_ENTER);
             End();
             Main();
         }
@@ -369,12 +410,12 @@ internal class Program
         if (myScore > aiScore)
         {
             Pause(1000);
-            WaitForKey(GOOD_FIGHT, ConsoleKey.Enter);
+            WaitForKey(GOOD_FIGHT);
         }
         else
         {
             Pause(1000);
-            WaitForKey(BAD_FIGHT, ConsoleKey.Enter);
+            WaitForKey(BAD_FIGHT);
         }
     }
     //=======================================
@@ -469,7 +510,7 @@ internal class Program
         timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
 
         const string PRESS_ENTER = "\nPress Enter to continue";
-        WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
+        WaitForKey(PRESS_ENTER);
         Console.Clear();
         timer.Start();
     }
@@ -515,7 +556,7 @@ internal class Program
                 case ConsoleKey.Q:
                     Console.Clear();
                     End();
-                    Main();
+                    Environment.Exit(0);
                     break;
                 default:
                     Console.Beep();
@@ -575,17 +616,26 @@ internal class Program
 
     //==================================
     //Wait for key input
-    //https://stackoverflow.com/questions/71315422/make-user-press-specific-key-to-progress-in-program
     //==================================
-    static void WaitForKey(string prompt, ConsoleKey key, ConsoleModifiers modifiers = default)
+    static void WaitForKey(string prompt)
 {
     Console.Write(prompt);
 
     while (true)
     {
         var keyInfo = Console.ReadKey(true);
-        if (keyInfo.Key == key && keyInfo.Modifiers == modifiers)
-            return;
+        ConsoleKey enter = ConsoleKey.Enter;
+        ConsoleKey quit = ConsoleKey.Q;
+        if (keyInfo.Key == enter)
+            break;
+        if (keyInfo.Key == quit)
+        {
+            Console.Clear();
+            End();
+            Environment.Exit(0);
+        }
+        
+            
     }
 }
 
@@ -595,9 +645,10 @@ internal class Program
     static void IdlePlay()
     {
         const string STAGE_NAME = "IDLE PLAY";
+        Console.Clear();
         Title(STAGE_NAME);
         Intro(STAGE_NAME);
-        Console.Clear();
+        
 
         //set the health for idle mode and round counter
         aiScore = 100;
@@ -615,7 +666,7 @@ internal class Program
         const string PRESS_ENTER = "\nPress Enter to roll";
         const string INSTRUCTIONS = "\nRoll to attack the Villain.\n" + PRESS_ENTER;
         bool endGame = aiScore > 0 || myScore > 0;
-        WaitForKey(INSTRUCTIONS, ConsoleKey.Enter);
+        WaitForKey(INSTRUCTIONS);
 
         while (endGame)
         {
@@ -626,7 +677,7 @@ internal class Program
             DiceTotals();
             DiceComparisons();
             HealthDisplay();
-            WaitForKey(PRESS_ENTER, ConsoleKey.Enter);
+            WaitForKey(PRESS_ENTER);
             EndGame();
         }
     }
@@ -649,7 +700,7 @@ internal class Program
 
         Console.Clear();
         string bonus =$"Your total is {bonusHit}.\nPress Enter to continue";
-        WaitForKey(bonus, ConsoleKey.Enter);
+        WaitForKey(bonus);
         End();
     }
 
@@ -659,27 +710,27 @@ internal class Program
     //=======================================
     static void DiceRandomChase()
     {
-  
-        bonusHit =0;
 
+        //show cursor
+        Console.CursorVisible = true;
+        bonusHit = 0;
         elapsed = false;
         bool coord;
+
         while (!elapsed)
         {
-            
             //Dice sprite and the corresponding Index
-            (string [] sprite, int indexSprite) dice = DiceSprite();
-            string [] diceSprite = dice.sprite;
+            (string[] sprite, int indexSprite) dice = DiceSprite();
+            string[] diceSprite = dice.sprite;
             int spriteIndex = dice.indexSprite;
 
             //Random dice coordinates
             int diceWidth = CoordinatesWidth();
             int diceHeight = CoordinatesHeight();
-            
 
             //dice will generate at this position
-            for (int i = 0; i< 5; i++)
-            {  
+            for (int i = 0; i < 5; i++)
+            {
                 Console.SetCursorPosition(diceWidth, diceHeight++);
                 Console.Write(dice.sprite[i]);
             }
@@ -704,18 +755,20 @@ internal class Program
                 {
                     Console.Clear();
                     Console.SetCursorPosition(cursorCol, cursorRow);
-                    //Bonus hit
+
+                    //Bonus number
                     bonusHit += dice.indexSprite;
                     Console.Write($"+ {dice.indexSprite}");
                     break;
                 }
 
-                // //exit as soon as timer elapses
+                //exit as soon as timer elapses
                 if (elapsed) break;
 
 
             } while (!coord);
         }
+
     }
 
     //=======================================
