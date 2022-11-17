@@ -43,12 +43,19 @@ internal class Program
     {
         //Show cursor
         Console.CursorVisible = true;
+<<<<<<< HEAD
 
         //username choice
+=======
+>>>>>>> 3b4d6a3e4a7646335f4104659b0186fe922aa8bb
         string s ="Choose a username: ";
         Console.Write(s);
         userName = Console.ReadLine();
         return userName;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3b4d6a3e4a7646335f4104659b0186fe922aa8bb
     }
     
     //==========================================
@@ -78,6 +85,7 @@ internal class Program
     static void StartMenu()
     {
         Console.Clear();
+<<<<<<< HEAD
  
         int choice;
         string [] menu = {"1. Play", "2. Idle Play: Boss Fight", "3. Chase The Dice",
@@ -85,6 +93,13 @@ internal class Program
         
         string MENU = (@$"
     Use Arrows to Make a Choice, {userName}:
+=======
+
+        int choice;
+        const string INVALID_INPUT = "\nInvalid input, restarting menu...";
+        string MENU = (@$"
+    Make a Choice {userName},
+>>>>>>> 3b4d6a3e4a7646335f4104659b0186fe922aa8bb
 
     1. Play
     2. Idle Play: Boss Fight
@@ -98,7 +113,21 @@ internal class Program
             Console.Write(MENU);
         do
         {
+<<<<<<< HEAD
             choice = MenuKeys(menu);
+=======
+
+            //Hide cursor
+            Console.CursorVisible = false;
+
+            choice = EnterInt(MENU);
+
+            if (choice == 5)
+            {
+                EndCountdown();
+                break;
+            }
+>>>>>>> 3b4d6a3e4a7646335f4104659b0186fe922aa8bb
 
             switch (choice)
             {
@@ -594,6 +623,7 @@ internal class Program
             
             //resetting the cursor if user hits boundary
             if (cursorRow == minHeightWidth)
+<<<<<<< HEAD
             {
                 cursorRow = maxHeight - sizeOffset;
             }
@@ -670,12 +700,26 @@ internal class Program
             int minHeight = 3;
             int maxHeight = 7;
             if (cursorRow < minHeight)
+=======
+>>>>>>> 3b4d6a3e4a7646335f4104659b0186fe922aa8bb
             {
-                cursorRow = maxHeight;
+                cursorRow = maxHeight - sizeOffset;
             }
             else if (cursorRow > maxHeight)
             {
+<<<<<<< HEAD
                 cursorRow = minHeight;
+=======
+                cursorCol = maxWidth - sizeOffset;
+            }
+            else if (cursorRow == maxHeight)
+            {
+                cursorRow = minHeightWidth + sizeOffset;
+            }
+            else if (cursorCol == maxWidth)
+            {
+                cursorCol = minHeightWidth + sizeOffset;
+>>>>>>> 3b4d6a3e4a7646335f4104659b0186fe922aa8bb
             }
             Console.ResetColor();
             Console.SetCursorPosition(4, oldRow );
