@@ -78,7 +78,7 @@ internal class Program
     static void StartMenu()
     {
         Console.Clear();
- 
+        
         int choice;
         string [] menu = {"1. Play", "2. Idle Play: Boss Fight", "3. Chase The Dice",
         "4. Credits", "5. Quit the Game"};
@@ -94,10 +94,10 @@ internal class Program
 
     Please Enter a Choice
 ");
-
-            Console.Write(MENU);
+            
         do
         {
+            Console.Write(MENU);
             choice = MenuKeys(menu);
 
             switch (choice)
@@ -164,7 +164,7 @@ internal class Program
     {
         //Hide cursor
         Console.CursorVisible = false;
-
+        Console.Clear();
         string s;
 
         // will display countdown
@@ -550,6 +550,7 @@ internal class Program
         int sizeOffset = 1;
         int maxHeight = Console.WindowHeight;
         int maxWidth = Console.WindowWidth;
+        
         const string ERROR = "quack";
 
         //set the cursor's new position
@@ -646,6 +647,7 @@ internal class Program
                     newIndex++;
                     break;
                 case ConsoleKey.Enter:
+                Console.ResetColor();
                 return newIndex + 1;
             }
 
@@ -762,7 +764,7 @@ internal class Program
 
         //set the health for idle mode and round counter
         aiScore = 100;
-        myScore = 20;
+        myScore = 100;
         roundCounter = 0;
 
     // ==================================
@@ -827,7 +829,6 @@ internal class Program
         string bonus =$"Your total is {bonusHit}.\nPress Enter to continue";
         WaitForKey(bonus);
         EndCountdown();
-    
 
     }
 
@@ -839,10 +840,12 @@ internal class Program
 
         //show cursor
         Console.CursorVisible = true;
+
         bonusHit = 0;
         elapsed = false;
         bool coord;
-
+cursorRow = Console.WindowHeight/2;
+        cursorCol = Console.WindowWidth/2;
         while (!elapsed)
         {
             //Dice sprite and the corresponding Index
@@ -862,7 +865,7 @@ internal class Program
             }
 
             //start game at this position
-            Console.SetCursorPosition(Console.WindowHeight / 2, Console.WindowWidth / 2);
+            Console.SetCursorPosition(Console.WindowWidth / 2, Console.WindowHeight / 2);
 
             do
             {
