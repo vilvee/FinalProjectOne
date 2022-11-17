@@ -41,13 +41,28 @@ internal class Program
     //==========================================
     static string UserName()
     {
-        //Show cursor
-        Console.CursorVisible = true;
+        //hide cursor
+        Console.CursorVisible = false;
 
-        //username choice
-        string s ="Choose a username: ";
-        Console.Write(s);
-        userName = Console.ReadLine();
+        int pauseTime = 1000;
+        const string WELCOME ="\n\n Welcome to your first dice dungeons... ";
+        const string ASK_NAME = "\n What is your name, adventurer?\n\n";
+        string [] answerField = {"?", "?", "?", "?", "?"};
+
+        Console.WriteLine(WELCOME);
+        Pause(pauseTime);
+        Console.WriteLine(ASK_NAME);
+        Pause(pauseTime);
+        Console.Write(string.Join(" ", answerField));
+       
+        for (int i = 0; i < answerField.Length; i++)
+        {       
+                ConsoleKeyInfo letter = Console.ReadKey(true);
+                string letterInput = letter.KeyChar.ToString();
+                answerField[i] = letterInput;
+                Console.Write($"\r  {string.Join(" ", answerField)}");
+        }
+
         return userName;
     }
     
@@ -57,19 +72,6 @@ internal class Program
     static void Title (string prompt)
     {
         Console.Title = prompt;
-    }
-
-    //==========================================
-    //Prompt and user entered parse int
-    //==========================================
-    static int EnterInt (string prompt)
-    {
-        int number;
-        Console.Write(prompt);
-     
-        //make choice invisible
-        int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out number);
-        return number;
     }
 
     //===========================
@@ -116,6 +118,7 @@ internal class Program
                     break;
             }
         } while (choice != 5);
+        
         EndCountdown();
 
     }
@@ -618,6 +621,7 @@ internal class Program
 {
         int newIndex = 0;
         int oldIndex = 1;
+        int indexOffset = 1;
         cursorRow = 3;
         int oldRow;
 
@@ -629,7 +633,6 @@ internal class Program
         Console.Write(menu[newIndex]);
         ConsoleKeyInfo key;
         Console.SetCursorPosition(4, cursorRow);
-
 
         do
         {
@@ -648,7 +651,7 @@ internal class Program
                     break;
                 case ConsoleKey.Enter:
                 Console.ResetColor();
-                return newIndex + 1;
+                return newIndex + indexOffset;
             }
 
             if (newIndex < 0)
@@ -668,9 +671,9 @@ internal class Program
                 oldIndex = 0;
             }
 
-
             int minHeight = 3;
             int maxHeight = 7;
+
             if (cursorRow < minHeight)
             {
                 cursorRow = maxHeight;
@@ -679,9 +682,13 @@ internal class Program
             {
                 cursorRow = minHeight;
             }
+
+            //reset color of the previous colored row
             Console.ResetColor();
             Console.SetCursorPosition(4, oldRow );
             Console.Write(menu[oldIndex]);
+
+            //color the selection row
             Console.SetCursorPosition(4, cursorRow);
             Console.BackgroundColor = ConsoleColor.Red;
             Console.ForegroundColor = ConsoleColor.Black;
@@ -689,12 +696,6 @@ internal class Program
 
         } while (true);
        
-    }
-
-    static void ResetColor()
-    {
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.Gray;
     }
 
     //=======================================
@@ -713,7 +714,7 @@ internal class Program
         string [] four ={"+---------+", "| o     o |", "|         |",  "| o     o |", "+---------+ ",};
         string [] five ={"+---------+", "| o     o |", "|    o    |", "| o     o |", "+---------+ ",};
         string [] six ={"+---------+", "| o     o |", "| o     o |", "| o     o |", "+---------+ ",};
-        string [] []dice =  {one, two, three, four, five, six};
+        string [] [] dice =  {one, two, three, four, five, six};
 
         Random diceRd = new Random();
         int diceSpriteNum = diceRd.Next(ARRAY_MIN, dice.Length);
