@@ -22,7 +22,7 @@ internal class Program
     static Timer timer;
     static bool elapsed = false;
     static int bonusHit = 0;
-    static string userName = "";
+    static string userName = "Placeholder";
 
     private static void Main()
     {
@@ -47,22 +47,51 @@ internal class Program
         int pauseTime = 1000;
         const string WELCOME ="\n\n Welcome to your first dice dungeons... ";
         const string ASK_NAME = "\n What is your name, adventurer?\n\n";
-        string [] answerField = {"?", "?", "?", "?", "?"};
+        string [] answerField = {"?", "?", "?", "?", "?", ""};
 
         Console.WriteLine(WELCOME);
         Pause(pauseTime);
         Console.WriteLine(ASK_NAME);
         Pause(pauseTime);
-        Console.Write(string.Join(" ", answerField));
-       
-        for (int i = 0; i < answerField.Length; i++)
-        {       
-                ConsoleKeyInfo letter = Console.ReadKey(true);
-                string letterInput = letter.KeyChar.ToString();
-                answerField[i] = letterInput;
-                Console.Write($"\r  {string.Join(" ", answerField)}");
-        }
+        Console.Write($"  {string.Join(" ", answerField)}");
+        ConsoleKeyInfo letter;
+        int index = 0;
+        const int MAX_INDEX = 5;
 
+        //? will get replaced with letters
+        do
+        {
+
+            letter = Console.ReadKey(true);
+
+                if (letter.Key == ConsoleKey.Backspace && index > 0)
+                {
+                    //erase characters
+                    index--;
+                    answerField[index] = "?";
+                    Console.Write($"\r  {string.Join(" ", answerField)}");
+                }
+                else if (index >= 0 && index < MAX_INDEX && letter.Key != ConsoleKey.Enter )
+                {
+                    string letterInput = letter.KeyChar.ToString();
+                    answerField[index] = letterInput;
+                    index++;
+                    Console.Write($"\r  {string.Join(" ", answerField)}");
+                    
+                }
+                else continue;
+
+           
+        } while (letter.Key != ConsoleKey.Enter);
+
+        string[] userNameArray = new string[index];
+
+        for (int i = 0; i < userNameArray.Length ; i++)
+         {
+            userNameArray[i] = answerField[i];
+         }
+
+        userName = string.Concat(userNameArray);
         return userName;
     }
     
@@ -82,6 +111,7 @@ internal class Program
         Console.Clear();
         
         int choice;
+        int exitNumber = 5;
         string [] menu = {"1. Play", "2. Idle Play: Boss Fight", "3. Chase The Dice",
         "4. Credits", "5. Quit the Game"};
         
@@ -117,7 +147,7 @@ internal class Program
                     Credits();
                     break;
             }
-        } while (choice != 5);
+        } while (choice != exitNumber);
         
         EndCountdown();
 
@@ -633,6 +663,8 @@ internal class Program
         Console.Write(menu[newIndex]);
         ConsoleKeyInfo key;
         Console.SetCursorPosition(4, cursorRow);
+        const int MIN_INDEX = 0;
+        const int MAX_INDEX = 4;
 
         do
         {
@@ -650,25 +682,24 @@ internal class Program
                     newIndex++;
                     break;
                 case ConsoleKey.Enter:
-                Console.ResetColor();
-                return newIndex + indexOffset;
+                break;
             }
 
-            if (newIndex < 0)
+            if (newIndex < MIN_INDEX)
             {
-                newIndex = 4;
+                newIndex = MAX_INDEX;
             }
-            else if (newIndex > 4)
+            else if (newIndex > MAX_INDEX)
             {
-                newIndex = 0;
+                newIndex = MIN_INDEX;
             }
-            else if (oldIndex < 0)
+            else if (oldIndex < MIN_INDEX)
             {
-                oldIndex = 4;
+                oldIndex = MAX_INDEX;
             }
-            else if (oldIndex > 4)
+            else if (oldIndex > MAX_INDEX)
             {
-                oldIndex = 0;
+                oldIndex = MIN_INDEX;
             }
 
             int minHeight = 3;
@@ -694,7 +725,10 @@ internal class Program
             Console.ForegroundColor = ConsoleColor.Black;
             Console.Write(menu[newIndex]);     
 
-        } while (true);
+        } while (key.Key != ConsoleKey.Enter);
+
+        Console.ResetColor();
+        return newIndex + indexOffset;
        
     }
 
@@ -735,11 +769,12 @@ internal class Program
 {
     Console.Write(prompt);
 
-    while (true)
+    do
     {
         ConsoleKeyInfo keyInfo = Console.ReadKey(true);
         ConsoleKey enter = ConsoleKey.Enter;
         ConsoleKey quit = ConsoleKey.Q;
+
         if (keyInfo.Key == enter)
             break;
         if (keyInfo.Key == quit)
@@ -747,10 +782,8 @@ internal class Program
             Console.Clear();
             EndCountdown();
             Environment.Exit(0);
-        }
-        
-            
-    }
+        }       
+    } while (!Console.KeyAvailable);
 }
 
     //=======================================
@@ -844,7 +877,7 @@ internal class Program
 
         bonusHit = 0;
         elapsed = false;
-        bool coord;
+        bool intersect;
 cursorRow = Console.WindowHeight/2;
         cursorCol = Console.WindowWidth/2;
         while (!elapsed)
@@ -870,18 +903,12 @@ cursorRow = Console.WindowHeight/2;
 
             do
             {
-                const int MAX_HEIGHT = 5;
-                const int MIN_HEIGHT = 2;
-                const int MAX_WIDTH = 10;
-                bool offsetLeft = cursorRow <= diceHeight - MIN_HEIGHT && cursorRow >= diceHeight - MAX_HEIGHT && cursorCol == diceWidth;
-                bool offsetRight = cursorRow <= diceHeight - MIN_HEIGHT && cursorRow >= diceHeight - MAX_HEIGHT && cursorCol == diceWidth + MAX_WIDTH;
-                bool offsetBottom = cursorRow == diceHeight - MIN_HEIGHT && cursorCol >= diceWidth && cursorCol <= diceWidth + MAX_WIDTH;
-                bool offsetTop = cursorRow == diceHeight - MAX_HEIGHT && cursorCol >= diceWidth && cursorCol <= diceWidth + MAX_WIDTH;
-                coord = offsetLeft || offsetRight || offsetBottom || offsetTop;
+               
+                intersect = Intersect(diceHeight, diceWidth);
 
                 Keys();
 
-                if (coord)
+                if (intersect)
                 {
                     Console.Clear();
                     Console.SetCursorPosition(cursorCol, cursorRow);
@@ -896,10 +923,25 @@ cursorRow = Console.WindowHeight/2;
                 if (elapsed) break;
 
 
-            } while (!coord);
+            } while (!intersect);
         }
 
     }
+
+static bool Intersect(int diceHeight, int diceWidth)
+{
+                const int MAX_HEIGHT = 5;
+                const int MIN_HEIGHT = 2;
+                const int MAX_WIDTH = 10;
+                bool offsetLeft = cursorRow <= diceHeight - MIN_HEIGHT && cursorRow >= diceHeight - MAX_HEIGHT && cursorCol == diceWidth;
+                bool offsetRight = cursorRow <= diceHeight - MIN_HEIGHT && cursorRow >= diceHeight - MAX_HEIGHT && cursorCol == diceWidth + MAX_WIDTH;
+                bool offsetBottom = cursorRow == diceHeight - MIN_HEIGHT && cursorCol >= diceWidth && cursorCol <= diceWidth + MAX_WIDTH;
+                bool offsetTop = cursorRow == diceHeight - MAX_HEIGHT && cursorCol >= diceWidth && cursorCol <= diceWidth + MAX_WIDTH;
+                bool intersect = offsetLeft || offsetRight || offsetBottom || offsetTop;
+                return intersect;
+
+
+}
 
     //=======================================
     // Game credits
