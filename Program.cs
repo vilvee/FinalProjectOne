@@ -220,9 +220,10 @@ internal class Program
 
         //this text will appear as intro to the game
         Console.Clear();
-        string s = "\nDuring one villain's long long long long long long long and tedious battle monologue...";
-        Console.WriteLine(s);
-        Pause(4000);
+        int pauseTime = 1000;
+        string s = "\nDuring one villain's long long long long long long long and tedious battle monologue...\n\n\n Enter";
+        WaitForKey(s);
+
     }
 
     //===========================
@@ -230,7 +231,7 @@ internal class Program
     //===========================
     static void Adventure()
     {
-         //Hide cursor
+        //Hide cursor
         Console.CursorVisible = false;
 
         const string STAGE_NAME = "ADVENTURE";
@@ -403,8 +404,10 @@ internal class Program
     //===========================
     static int DiceRoll()
     {
+        const int MIN_DICE= 1;
+        const int MAX_DICE = 11;
         Random dice = new();
-        int rolls = dice.Next(1, 11);
+        int rolls = dice.Next(MIN_DICE, MAX_DICE);
         return rolls;
     }
 
@@ -415,7 +418,7 @@ internal class Program
     {
         int [] rolls = new int[4];
 
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < rolls.Length; i++)
         {
             rolls[i] = DiceRoll();
         }
@@ -450,21 +453,22 @@ internal class Program
         const string PRESS_ENTER = "\nPress Enter to continue";
         const string GOOD_FIGHT = "\nYou had a good fight!\n" + PRESS_ENTER;
         const string BAD_FIGHT = "\nYou can do better!\n" + PRESS_ENTER;
+        const int PAUSE_TIME = 1000;
 
         if (myScore > aiScore)
         {
-            Pause(1000);
+            Pause(PAUSE_TIME);
             WaitForKey(GOOD_FIGHT);
         }
         else
         {
-            Pause(1000);
+            Pause(PAUSE_TIME);
             WaitForKey(BAD_FIGHT);
         }
     }
     
     //=======================================
-    // Handles scores in BossFight
+    // Handles scores
     //=======================================
     static void ScoreHandler()
     {
@@ -500,10 +504,11 @@ internal class Program
     static int CoordinatesWidth()
     {
 
-        int[] numbers = Enumerable.Range(10, 100).ToArray();
+        const int MIN_WIDTH = 10;
+        const int MAX_WIDTH = 101;
         Random coordinates = new();
-        int index = coordinates.Next(0, numbers.Length);
-        int rdNumber = numbers[index];
+        int index = coordinates.Next(MIN_WIDTH, MAX_WIDTH);
+        int rdNumber = index;
         return rdNumber;
     }
 
@@ -512,10 +517,11 @@ internal class Program
     //=======================================
     static int CoordinatesHeight()
     {
-        int[] numbers = Enumerable.Range(5, 20).ToArray();
+        const int MIN_HEIGHT = 5;
+        const int MAX_HEIGHT = 21;
         Random coordinates = new();
-        int index = coordinates.Next(0, numbers.Length);
-        int rdNumber = numbers[index];
+        int index = coordinates.Next(MIN_HEIGHT, MAX_HEIGHT);
+        int rdNumber = index;
         return rdNumber;
     }
 
